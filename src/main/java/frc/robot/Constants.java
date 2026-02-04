@@ -16,4 +16,25 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class DriveConstants {
+    // SparkMax CAN IDs - Adjust these to match your robot's wiring
+    public static final int kLeftFrontMotorId = 1;
+    public static final int kLeftMiddleMotorId = 2;
+    public static final int kLeftBackMotorId = 3;
+    public static final int kRightFrontMotorId = 4;
+    public static final int kRightMiddleMotorId = 5;
+    public static final int kRightBackMotorId = 6;
+
+    // Motor inversions - Tune based on actual robot behavior
+    // Left side typically needs to be inverted for correct drive direction
+    public static final boolean kLeftMotorsInverted = true;
+    public static final boolean kRightMotorsInverted = false;
+
+    // Control parameters
+    public static final double kJoystickDeadband = 0.05;  // Ignore small joystick movements
+    public static final double kTriggerDeadband = 0.05;   // Ignore light trigger presses
+    public static final double kMaxSpeed = 1.0;           // Maximum speed multiplier (0.0 to 1.0)
+    public static final double kTriggerScale = 0.8;       // Triggers run at 80% power for fine control
+  }
 }
