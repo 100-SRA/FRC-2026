@@ -4,8 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,7 +12,7 @@ import frc.robot.Constants.DriveConstants;
 
 /**
  * Drive subsystem for 6-motor tank drive (3 motors per side).
- * Uses REV SparkMax motor controllers on CAN bus.
+ * Uses PWM Spark motor controllers.
  *
  * Control scheme:
  * - Tank drive with independent left/right control
@@ -22,15 +21,15 @@ import frc.robot.Constants.DriveConstants;
  * - Left joystick Y controls both sides synchronized
  */
 public class Drive extends SubsystemBase {
-  // Left side motor controllers
-  private final CANSparkMax m_leftFront;
-  private final CANSparkMax m_leftMiddle;
-  private final CANSparkMax m_leftBack;
+  // Left side motor controllers (PWM)
+  private final Spark m_leftFront;
+  private final Spark m_leftMiddle;
+  private final Spark m_leftBack;
 
-  // Right side motor controllers
-  private final CANSparkMax m_rightFront;
-  private final CANSparkMax m_rightMiddle;
-  private final CANSparkMax m_rightBack;
+  // Right side motor controllers (PWM)
+  private final Spark m_rightFront;
+  private final Spark m_rightMiddle;
+  private final Spark m_rightBack;
 
   // Motor controller groups for synchronized control
   private final MotorControllerGroup m_leftMotors;
@@ -39,22 +38,14 @@ public class Drive extends SubsystemBase {
   /** Creates a new Drive subsystem. */
   public Drive() {
     // Initialize left side motors
-    m_leftFront = new CANSparkMax(DriveConstants.kLeftFrontMotorId, MotorType.kBrushless);
-    m_leftMiddle = new CANSparkMax(DriveConstants.kLeftMiddleMotorId, MotorType.kBrushless);
-    m_leftBack = new CANSparkMax(DriveConstants.kLeftBackMotorId, MotorType.kBrushless);
+    m_leftFront = new Spark(DriveConstants.kLeftFrontMotorPort);
+    m_leftMiddle = new Spark(DriveConstants.kLeftMiddleMotorPort);
+    m_leftBack = new Spark(DriveConstants.kLeftBackMotorPort);
 
     // Initialize right side motors
-    m_rightFront = new CANSparkMax(DriveConstants.kRightFrontMotorId, MotorType.kBrushless);
-    m_rightMiddle = new CANSparkMax(DriveConstants.kRightMiddleMotorId, MotorType.kBrushless);
-    m_rightBack = new CANSparkMax(DriveConstants.kRightBackMotorId, MotorType.kBrushless);
-
-    // Restore factory defaults to clear any previous configurations
-    m_leftFront.restoreFactoryDefaults();
-    m_leftMiddle.restoreFactoryDefaults();
-    m_leftBack.restoreFactoryDefaults();
-    m_rightFront.restoreFactoryDefaults();
-    m_rightMiddle.restoreFactoryDefaults();
-    m_rightBack.restoreFactoryDefaults();
+    m_rightFront = new Spark(DriveConstants.kRightFrontMotorPort);
+    m_rightMiddle = new Spark(DriveConstants.kRightMiddleMotorPort);
+    m_rightBack = new Spark(DriveConstants.kRightBackMotorPort);
 
     // Group motors by side for synchronized control
     m_leftMotors = new MotorControllerGroup(m_leftFront, m_leftMiddle, m_leftBack);
@@ -121,8 +112,7 @@ public class Drive extends SubsystemBase {
     // Update telemetry for driver dashboard
     SmartDashboard.putNumber("Drive/Left Speed", m_leftFront.get());
     SmartDashboard.putNumber("Drive/Right Speed", m_rightFront.get());
-    SmartDashboard.putNumber("Drive/Left Front Temp", m_leftFront.getMotorTemperature());
-    SmartDashboard.putNumber("Drive/Right Front Temp", m_rightFront.getMotorTemperature());
+    // Note: PWM Spark controllers don't provide temperature telemetry
   }
 
   @Override
