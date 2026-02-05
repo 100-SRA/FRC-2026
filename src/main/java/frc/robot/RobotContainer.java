@@ -20,9 +20,23 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drive m_drive = new Drive();
 
+  /**
+   * Controller Configuration:
+   * - Driver Controller (Port 0): Tank drive controls
+   *   - Left Joystick Y: Forward/backward
+   *   - L2 Trigger: Left side power
+   *   - R2 Trigger: Right side power
+   *
+   * - Operator Controller (Port 1): Mechanism controls
+   *   - Buttons TBD based on mechanism subsystems
+   */
   // PS4 controller for driver (port 0)
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
+
+  // PS4 controller for operator (port 1)
+  private final CommandPS4Controller m_operatorController =
+      new CommandPS4Controller(OperatorConstants.kOperatorControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -49,8 +63,12 @@ public class RobotContainer {
    * - m_driverController.square().whileTrue(slowModeCommand);
    */
   private void configureBindings() {
-    // Add button bindings here for additional features
+    // ==================== DRIVER CONTROLLER BINDINGS ====================
     // The drive controls (L2/R2/Left Joystick) are handled by the default TeleopDrive command
+    // TODO: Add driver-specific button bindings here
+
+    // ==================== OPERATOR CONTROLLER BINDINGS ====================
+    // TODO: Add operator-specific button bindings here (shooting, intake, etc.)
   }
 
   /**
@@ -62,5 +80,14 @@ public class RobotContainer {
     // No autonomous command configured yet
     // TODO: Add autonomous routines here
     return null;
+  }
+
+  /**
+   * Get the operator controller for use in commands and subsystems.
+   *
+   * @return the operator PS4 controller (port 1)
+   */
+  public CommandPS4Controller getOperatorController() {
+    return m_operatorController;
   }
 }
