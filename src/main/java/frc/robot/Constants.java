@@ -19,18 +19,21 @@ public final class Constants {
   }
 
   public static class DriveConstants {
-    // PWM Port Numbers - Adjust these to match your robot's wiring (0-9 on RoboRIO)
-    public static final int kLeftFrontMotorPort = 0;
-    public static final int kLeftMiddleMotorPort = 1;
-    public static final int kLeftBackMotorPort = 2;
-    public static final int kRightFrontMotorPort = 3;
-    public static final int kRightMiddleMotorPort = 4;
-    public static final int kRightBackMotorPort = 5;
+    // CAN IDs for SparkMax Motor Controllers
+    // IMPORTANT: Adjust these to match your robot's CAN bus configuration!
+    // Use REV Hardware Client to configure/check CAN IDs on your SparkMaxes
+    public static final int kLeftFrontMotorID = 1;
+    public static final int kLeftMiddleMotorID = 2;
+    public static final int kLeftBackMotorID = 3;
+    public static final int kRightFrontMotorID = 4;
+    public static final int kRightMiddleMotorID = 5;
+    public static final int kRightBackMotorID = 6;
 
     // Motor inversions - Tune based on actual robot behavior
-    // Left side typically needs to be inverted for correct drive direction
-    public static final boolean kLeftMotorsInverted = true;
-    public static final boolean kRightMotorsInverted = false;
+    // Test with robot on blocks first! One side typically needs to be inverted
+    // for correct drive direction (both sides should spin forward when given positive input)
+    public static final boolean kLeftMotorsInverted = false;
+    public static final boolean kRightMotorsInverted = true;
 
     // Control parameters
     public static final double kJoystickDeadband = 0.05;  // Ignore small joystick movements

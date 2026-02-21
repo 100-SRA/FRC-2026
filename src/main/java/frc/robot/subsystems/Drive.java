@@ -4,15 +4,18 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
+// Import REV Robotics library for SparkMax motor controllers
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+
 /**
  * Drive subsystem for 6-motor tank drive (3 motors per side).
- * Uses PWM Spark motor controllers.
+ * Uses CANSparkMax motor controllers with CAN bus.
  *
  * Control scheme:
  * - Tank drive with independent left/right control
@@ -21,39 +24,66 @@ import frc.robot.Constants.DriveConstants;
  * - Left joystick Y controls both sides synchronized
  */
 public class Drive extends SubsystemBase {
-  // Left side motor controllers (PWM)
-  private final Spark m_leftFront;
-  private final Spark m_leftMiddle;
-  private final Spark m_leftBack;
+  // Left side motor controllers (CAN)
+  private final CANSparkMax m_leftFront;
+  private final CANSparkMax m_leftMiddle;
+  private final CANSparkMax m_leftBack;
 
-  // Right side motor controllers (PWM)
-  private final Spark m_rightFront;
-  private final Spark m_rightMiddle;
-  private final Spark m_rightBack;
+  // Right side motor controllers (CAN)
+  private final CANSparkMax m_rightFront;
+  private final CANSparkMax m_rightMiddle;
+  private final CANSparkMax m_rightBack;
 
-  // Motor controller groups for synchronized control
-  private final MotorControllerGroup m_leftMotors;
-  private final MotorControllerGroup m_rightMotors;
+  // Encoders for telemetry and future autonomous use
+  private final RelativeEncoder m_leftEncoder;
+  private final RelativeEncoder m_rightEncoder;
 
   /** Creates a new Drive subsystem. */
   public Drive() {
-    // Initialize left side motors
-    m_leftFront = new Spark(DriveConstants.kLeftFrontMotorPort);
-    m_leftMiddle = new Spark(DriveConstants.kLeftMiddleMotorPort);
-    m_leftBack = new Spark(DriveConstants.kLeftBackMotorPort);
+    // Initialize left side motors with CAN IDs
+    // MotorType.kBrushless for NEO motors, use kBrushed for CIM/BAG motors
+    m_leftFront = new CANSparkMax(DriveConstants.kLeftFrontMotorID, MotorType.kBrushless);
+    m_leftMiddle = new CANSparkMax(DriveConstants.kLeftMiddleMotorID, MotorType.kBrushless);
+    m_leftBack = new CANSparkMax(DriveConstants.kLeftBackMotorID, MotorType.kBrushless);
 
-    // Initialize right side motors
-    m_rightFront = new Spark(DriveConstants.kRightFrontMotorPort);
-    m_rightMiddle = new Spark(DriveConstants.kRightMiddleMotorPort);
-    m_rightBack = new Spark(DriveConstants.kRightBackMotorPort);
+    // Initialize right side motors with CAN IDs
+    m_rightFront = new CANSparkMax(DriveConstants.kRightFrontMotorID, MotorType.kBrushless);
+    m_rightMiddle = new CANSparkMax(DriveConstants.kRightMiddleMotorID, MotorType.kBrushless);
+    m_rightBack = new CANSparkMax(DriveConstants.kRightBackMotorID, MotorType.kBrushless);
 
-    // Group motors by side for synchronized control
-    m_leftMotors = new MotorControllerGroup(m_leftFront, m_leftMiddle, m_leftBack);
-    m_rightMotors = new MotorControllerGroup(m_rightFront, m_rightMiddle, m_rightBack);
+    // Restore all SparkMaxes to factory defaults (recommended by REV)
+    m_leftFront.restoreFactoryDefaults();
+    m_leftMiddle.restoreFactoryDefaults();
+    m_leftBack.restoreFactoryDefaults();
+    m_rightFront.restoreFactoryDefaults();
+    m_rightMiddle.restoreFactoryDefaults();
+    m_rightBack.restoreFactoryDefaults();
 
     // Set motor inversions based on constants
-    m_leftMotors.setInverted(DriveConstants.kLeftMotorsInverted);
-    m_rightMotors.setInverted(DriveConstants.kRightMotorsInverted);
+    m_leftFront.setInverted(DriveConstants.kLeftMotorsInverted);
+    m_leftMiddle.setInverted(DriveConstants.kLeftMotorsInverted);
+    m_leftBack.setInverted(DriveConstants.kLeftMotorsInverted);
+    m_rightFront.setInverted(DriveConstants.kRightMotorsInverted);
+    m_rightMiddle.setInverted(DriveConstants.kRightMotorsInverted);
+    m_rightBack.setInverted(DriveConstants.kRightMotorsInverted);
+
+    // Configure follower motors to follow the leader motors
+    m_leftMiddle.follow(m_leftFront);
+    m_leftBack.follow(m_leftFront);
+    m_rightMiddle.follow(m_rightFront);
+    m_rightBack.follow(m_rightFront);
+
+    // Get encoders from leader motors for telemetry
+    m_leftEncoder = m_leftFront.getEncoder();
+    m_rightEncoder = m_rightFront.getEncoder();
+
+    // Burn flash to save configurations (prevents loss on power cycle)
+    m_leftFront.burnFlash();
+    m_leftMiddle.burnFlash();
+    m_leftBack.burnFlash();
+    m_rightFront.burnFlash();
+    m_rightMiddle.burnFlash();
+    m_rightBack.burnFlash();
   }
 
   /**
@@ -71,9 +101,9 @@ public class Drive extends SubsystemBase {
     leftSpeed *= DriveConstants.kMaxSpeed;
     rightSpeed *= DriveConstants.kMaxSpeed;
 
-    // Set motor speeds
-    m_leftMotors.set(leftSpeed);
-    m_rightMotors.set(rightSpeed);
+    // Set motor speeds (only leader motors, followers will automatically follow)
+    m_leftFront.set(leftSpeed);
+    m_rightFront.set(rightSpeed);
   }
 
   /**
@@ -84,7 +114,7 @@ public class Drive extends SubsystemBase {
   public void setLeftSpeed(double speed) {
     speed = Math.max(-1.0, Math.min(1.0, speed));
     speed *= DriveConstants.kMaxSpeed;
-    m_leftMotors.set(speed);
+    m_leftFront.set(speed);
   }
 
   /**
@@ -95,15 +125,15 @@ public class Drive extends SubsystemBase {
   public void setRightSpeed(double speed) {
     speed = Math.max(-1.0, Math.min(1.0, speed));
     speed *= DriveConstants.kMaxSpeed;
-    m_rightMotors.set(speed);
+    m_rightFront.set(speed);
   }
 
   /**
    * Stops all motors immediately.
    */
   public void stop() {
-    m_leftMotors.set(0.0);
-    m_rightMotors.set(0.0);
+    m_leftFront.set(0.0);
+    m_rightFront.set(0.0);
   }
 
   @Override
@@ -112,7 +142,16 @@ public class Drive extends SubsystemBase {
     // Update telemetry for driver dashboard
     SmartDashboard.putNumber("Drive/Left Speed", m_leftFront.get());
     SmartDashboard.putNumber("Drive/Right Speed", m_rightFront.get());
-    // Note: PWM Spark controllers don't provide temperature telemetry
+
+    // Encoder telemetry (position and velocity)
+    SmartDashboard.putNumber("Drive/Left Encoder Position", m_leftEncoder.getPosition());
+    SmartDashboard.putNumber("Drive/Right Encoder Position", m_rightEncoder.getPosition());
+    SmartDashboard.putNumber("Drive/Left Encoder Velocity", m_leftEncoder.getVelocity());
+    SmartDashboard.putNumber("Drive/Right Encoder Velocity", m_rightEncoder.getVelocity());
+
+    // Temperature monitoring (important for SparkMax health)
+    SmartDashboard.putNumber("Drive/Left Front Temp (C)", m_leftFront.getMotorTemperature());
+    SmartDashboard.putNumber("Drive/Right Front Temp (C)", m_rightFront.getMotorTemperature());
   }
 
   @Override

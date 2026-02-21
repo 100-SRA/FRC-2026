@@ -62,8 +62,10 @@ public class TeleopDrive extends Command {
     // Get raw inputs from controller
     // Invert joystick Y so pushing forward = positive (forward drive)
     double joystick = -m_joystickY.getAsDouble();
-    double leftTrig = m_leftTrigger.getAsDouble();
-    double rightTrig = m_rightTrigger.getAsDouble();
+    // Normalize triggers from [-1.0, 1.0] to [0.0, 1.0]
+    // PS4 triggers report -1.0 when fully released, +1.0 when fully pressed
+    double leftTrig = (m_leftTrigger.getAsDouble() + 1.0) / 2.0;
+    double rightTrig = (m_rightTrigger.getAsDouble() + 1.0) / 2.0;
 
     // Apply deadbands to ignore small unintentional inputs
     joystick = applyDeadband(joystick, DriveConstants.kJoystickDeadband);
