@@ -4,21 +4,17 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CollectorConstants;
 
-/**
- * Collector (intake) subsystem.
- * Uses a REV SPARK MAX motor controller over CAN.
- * TODO: Set kCollectorCanId in Constants.java once the CAN ID is confirmed via REV Hardware Client.
- */
+/** Collector (intake) subsystem. Uses a REV SPARK MAX on CAN ID 3. */
 public class Collector extends SubsystemBase {
-  private final CANSparkMax m_motor;
+  private final SparkMax m_motor;
 
   public Collector() {
-    m_motor = new CANSparkMax(CollectorConstants.kCollectorCanId, MotorType.kBrushless);
+    m_motor = new SparkMax(CollectorConstants.kCollectorCanId, MotorType.kBrushless);
     m_motor.setInverted(CollectorConstants.kCollectorInverted);
   }
 

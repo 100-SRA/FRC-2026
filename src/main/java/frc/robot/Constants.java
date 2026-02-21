@@ -37,7 +37,7 @@ public final class Constants {
   }
 
   public static class CollectorConstants {
-    public static final int kCollectorCanId       = 0;     // TODO: set actual CAN ID (check REV Hardware Client)
+    public static final int kCollectorCanId       = 3;
     public static final boolean kCollectorInverted = false;
     public static final double kCollectorSpeed    = 0.8;
   }
