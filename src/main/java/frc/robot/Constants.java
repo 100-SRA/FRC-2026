@@ -19,35 +19,38 @@ public final class Constants {
   }
 
   public static class DriveConstants {
-    // PWM Port Numbers - Adjust these to match your robot's wiring (0-9 on RoboRIO)
-    public static final int kLeftFrontMotorPort = 0;
-    public static final int kLeftMiddleMotorPort = 1;
-    public static final int kLeftBackMotorPort = 2;
-    public static final int kRightFrontMotorPort = 3;
-    public static final int kRightMiddleMotorPort = 4;
-    public static final int kRightBackMotorPort = 5;
+    // PWM Port Numbers — 4 drive motors (2 per side)
+    public static final int kLeftFrontMotorPort  = 0;
+    public static final int kLeftBackMotorPort   = 1;
+    public static final int kRightFrontMotorPort = 2;
+    public static final int kRightBackMotorPort  = 3;
 
-    // Motor inversions - Tune based on actual robot behavior
-    // Left side typically needs to be inverted for correct drive direction
-    public static final boolean kLeftMotorsInverted = true;
+    // Motor inversions — tune based on actual robot behavior
+    public static final boolean kLeftMotorsInverted  = true;
     public static final boolean kRightMotorsInverted = false;
 
     // Control parameters
-    public static final double kJoystickDeadband = 0.05;  // Ignore small joystick movements
-    public static final double kTriggerDeadband = 0.05;   // Ignore light trigger presses
-    public static final double kMaxSpeed = 1.0;           // Maximum speed multiplier (0.0 to 1.0)
-    public static final double kTriggerScale = 0.8;       // Triggers run at 80% power for fine control
+    public static final double kJoystickDeadband = 0.05; // Ignore small joystick movements
+    public static final double kTriggerDeadband  = 0.05; // Ignore light trigger presses
+    public static final double kMaxSpeed         = 1.0;  // Maximum speed multiplier (0.0 to 1.0)
+    public static final double kTriggerScale     = 0.8;  // Triggers run at 80% power for fine control
   }
 
   public static class CollectorConstants {
-    public static final int kCollectorMotorPort = 6;      // TODO: set actual PWM port
+    public static final int kCollectorCanId       = 0;     // TODO: set actual CAN ID (check REV Hardware Client)
     public static final boolean kCollectorInverted = false;
-    public static final double kCollectorSpeed = 0.8;
+    public static final double kCollectorSpeed    = 0.8;
   }
 
   public static class LoaderConstants {
-    public static final int kLoaderMotorPort = 7;         // TODO: set actual PWM port
-    public static final boolean kLoaderInverted = false;
-    public static final double kLoaderSpeed = 0.8;
+    public static final int kLoaderMotorPort      = 4;
+    public static final boolean kLoaderInverted   = false;
+    public static final double kLoaderSpeed       = 0.8;
+  }
+
+  public static class ShooterConstants {
+    public static final int kShooterMotorPort     = 5;
+    public static final boolean kShooterInverted  = false;
+    public static final double kShooterSpeed      = 0.8;
   }
 }

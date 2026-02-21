@@ -11,24 +11,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 /**
- * Drive subsystem for 6-motor tank drive (3 motors per side).
- * Uses PWM Spark motor controllers.
+ * Drive subsystem for 4-motor tank drive (2 motors per side).
+ * Uses PWM Spark motor controllers on ports 0-3.
  *
  * Control scheme:
- * - Tank drive with independent left/right control
- * - L2 trigger controls left side
- * - R2 trigger controls right side
- * - Left joystick Y controls both sides synchronized
+ * - R2 trigger: both sides forward
+ * - L2 trigger: both sides backward
+ * - Right joystick: arcade drive (Y = forward/back, X = turn)
  */
 public class Drive extends SubsystemBase {
-  // Left side motor controllers (PWM)
+  // Left side motors (PWM ports 0 and 1)
   private final Spark m_leftFront;
-  private final Spark m_leftMiddle;
   private final Spark m_leftBack;
 
-  // Right side motor controllers (PWM)
+  // Right side motors (PWM ports 2 and 3)
   private final Spark m_rightFront;
-  private final Spark m_rightMiddle;
   private final Spark m_rightBack;
 
   // Motor controller groups for synchronized control
@@ -37,70 +34,32 @@ public class Drive extends SubsystemBase {
 
   /** Creates a new Drive subsystem. */
   public Drive() {
-    // Initialize left side motors
-    m_leftFront = new Spark(DriveConstants.kLeftFrontMotorPort);
-    m_leftMiddle = new Spark(DriveConstants.kLeftMiddleMotorPort);
-    m_leftBack = new Spark(DriveConstants.kLeftBackMotorPort);
-
-    // Initialize right side motors
+    m_leftFront  = new Spark(DriveConstants.kLeftFrontMotorPort);
+    m_leftBack   = new Spark(DriveConstants.kLeftBackMotorPort);
     m_rightFront = new Spark(DriveConstants.kRightFrontMotorPort);
-    m_rightMiddle = new Spark(DriveConstants.kRightMiddleMotorPort);
-    m_rightBack = new Spark(DriveConstants.kRightBackMotorPort);
+    m_rightBack  = new Spark(DriveConstants.kRightBackMotorPort);
 
-    // Group motors by side for synchronized control
-    m_leftMotors = new MotorControllerGroup(m_leftFront, m_leftMiddle, m_leftBack);
-    m_rightMotors = new MotorControllerGroup(m_rightFront, m_rightMiddle, m_rightBack);
+    m_leftMotors  = new MotorControllerGroup(m_leftFront, m_leftBack);
+    m_rightMotors = new MotorControllerGroup(m_rightFront, m_rightBack);
 
-    // Set motor inversions based on constants
     m_leftMotors.setInverted(DriveConstants.kLeftMotorsInverted);
     m_rightMotors.setInverted(DriveConstants.kRightMotorsInverted);
   }
 
   /**
-   * Tank drive control - sets left and right side speeds independently.
+   * Tank drive — sets left and right side speeds independently.
    *
-   * @param leftSpeed Speed for left side motors (-1.0 to 1.0)
+   * @param leftSpeed  Speed for left side motors (-1.0 to 1.0)
    * @param rightSpeed Speed for right side motors (-1.0 to 1.0)
    */
   public void tankDrive(double leftSpeed, double rightSpeed) {
-    // Clamp speeds to valid range
-    leftSpeed = Math.max(-1.0, Math.min(1.0, leftSpeed));
-    rightSpeed = Math.max(-1.0, Math.min(1.0, rightSpeed));
-
-    // Apply max speed limit
-    leftSpeed *= DriveConstants.kMaxSpeed;
-    rightSpeed *= DriveConstants.kMaxSpeed;
-
-    // Set motor speeds
+    leftSpeed  = Math.max(-1.0, Math.min(1.0, leftSpeed))  * DriveConstants.kMaxSpeed;
+    rightSpeed = Math.max(-1.0, Math.min(1.0, rightSpeed)) * DriveConstants.kMaxSpeed;
     m_leftMotors.set(leftSpeed);
     m_rightMotors.set(rightSpeed);
   }
 
-  /**
-   * Sets left side motor speed only.
-   *
-   * @param speed Speed for left side motors (-1.0 to 1.0)
-   */
-  public void setLeftSpeed(double speed) {
-    speed = Math.max(-1.0, Math.min(1.0, speed));
-    speed *= DriveConstants.kMaxSpeed;
-    m_leftMotors.set(speed);
-  }
-
-  /**
-   * Sets right side motor speed only.
-   *
-   * @param speed Speed for right side motors (-1.0 to 1.0)
-   */
-  public void setRightSpeed(double speed) {
-    speed = Math.max(-1.0, Math.min(1.0, speed));
-    speed *= DriveConstants.kMaxSpeed;
-    m_rightMotors.set(speed);
-  }
-
-  /**
-   * Stops all motors immediately.
-   */
+  /** Stops all drive motors immediately. */
   public void stop() {
     m_leftMotors.set(0.0);
     m_rightMotors.set(0.0);
@@ -108,15 +67,10 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // Update telemetry for driver dashboard
-    SmartDashboard.putNumber("Drive/Left Speed", m_leftFront.get());
+    SmartDashboard.putNumber("Drive/Left Speed",  m_leftFront.get());
     SmartDashboard.putNumber("Drive/Right Speed", m_rightFront.get());
-    // Note: PWM Spark controllers don't provide temperature telemetry
   }
 
   @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+  public void simulationPeriodic() {}
 }

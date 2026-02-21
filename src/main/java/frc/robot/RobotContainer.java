@@ -7,10 +7,12 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.RunCollector;
 import frc.robot.commands.RunLoader;
+import frc.robot.commands.RunShooter;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Loader;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 
@@ -22,21 +24,24 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive m_drive = new Drive();
+  private final Drive     m_drive     = new Drive();
   private final Collector m_collector = new Collector();
-  private final Loader m_loader = new Loader();
+  private final Loader    m_loader    = new Loader();
+  private final Shooter   m_shooter   = new Shooter();
 
   /**
    * Controller Configuration:
-   * - Driver Controller (Port 0):
-   *   - R2 trigger: both motors forward
-   *   - L2 trigger: both motors backward
+   *
+   * Driver Controller (Port 0):
+   *   - R2 trigger:       both drive motors forward
+   *   - L2 trigger:       both drive motors backward
    *   - Right joystick Y: forward/backward (arcade)
    *   - Right joystick X: turning (arcade)
    *
-   * - Operator Controller (Port 1):
-   *   - R1 (hold): run collector
-   *   - L1 (hold): run loader
+   * Operator Controller (Port 1):
+   *   - R1 (hold):   run collector (CAN SPARK MAX — set CAN ID in Constants.java)
+   *   - L1 (hold):   run loader   (PWM port 4)
+   *   - Cross (hold): run shooter  (PWM port 5)
    */
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
@@ -44,11 +49,9 @@ public class RobotContainer {
   private final CommandPS4Controller m_operatorController =
       new CommandPS4Controller(OperatorConstants.kOperatorControllerPort);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureBindings();
 
-    // R2 = both forward, L2 = both backward, right joystick = arcade drive
     m_drive.setDefaultCommand(
         new TeleopDrive(
             m_drive,
@@ -59,9 +62,9 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // Operator: hold R1 to run collector, hold L1 to run loader
-    m_operatorController.r1().whileTrue(new RunCollector(m_collector));
-    m_operatorController.l1().whileTrue(new RunLoader(m_loader));
+    m_operatorController.R1().whileTrue(new RunCollector(m_collector));
+    m_operatorController.L1().whileTrue(new RunLoader(m_loader));
+    m_operatorController.cross().whileTrue(new RunShooter(m_shooter));
   }
 
   public Command getAutonomousCommand() {
