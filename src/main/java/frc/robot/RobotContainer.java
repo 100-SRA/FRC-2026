@@ -5,8 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.RunCollector;
+import frc.robot.commands.RunLoader;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Loader;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 
@@ -17,77 +21,50 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
+  // Subsystems
   private final Drive m_drive = new Drive();
+  private final Collector m_collector = new Collector();
+  private final Loader m_loader = new Loader();
 
   /**
    * Controller Configuration:
-   * - Driver Controller (Port 0): Tank drive controls
-   *   - Left Joystick Y: Forward/backward
-   *   - L2 Trigger: Left side power
-   *   - R2 Trigger: Right side power
+   * - Driver Controller (Port 0):
+   *   - R2 trigger: both motors forward
+   *   - L2 trigger: both motors backward
+   *   - Right joystick Y: forward/backward (arcade)
+   *   - Right joystick X: turning (arcade)
    *
-   * - Operator Controller (Port 1): Mechanism controls
-   *   - Buttons TBD based on mechanism subsystems
+   * - Operator Controller (Port 1):
+   *   - R1 (hold): run collector
+   *   - L1 (hold): run loader
    */
-  // PS4 controller for driver (port 0)
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
 
-  // PS4 controller for operator (port 1)
   private final CommandPS4Controller m_operatorController =
       new CommandPS4Controller(OperatorConstants.kOperatorControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
     configureBindings();
 
-    // Set default command for Drive subsystem
-    // L2 trigger controls left side, R2 trigger controls right side
-    // Left joystick Y controls both sides synchronized (additive mixing)
+    // R2 = both forward, L2 = both backward, right joystick = arcade drive
     m_drive.setDefaultCommand(
         new TeleopDrive(
             m_drive,
-            () -> m_driverController.getLeftY(),
-            () -> m_driverController.getL2Axis(),
-            () -> m_driverController.getR2Axis()));
+            () -> m_driverController.getRightY(),
+            () -> m_driverController.getRightX(),
+            () -> m_driverController.getR2Axis(),
+            () -> m_driverController.getL2Axis()));
   }
 
-  /**
-   * Use this method to define your trigger->command mappings.
-   *
-   * <p>Button bindings can be added here for additional robot functionality.
-   * For example:
-   * - m_driverController.cross().onTrue(Commands.runOnce(() -> m_drive.stop(), m_drive));
-   * - m_driverController.square().whileTrue(slowModeCommand);
-   */
   private void configureBindings() {
-    // ==================== DRIVER CONTROLLER BINDINGS ====================
-    // The drive controls (L2/R2/Left Joystick) are handled by the default TeleopDrive command
-    // TODO: Add driver-specific button bindings here
-
-    // ==================== OPERATOR CONTROLLER BINDINGS ====================
-    // TODO: Add operator-specific button bindings here (shooting, intake, etc.)
+    // Operator: hold R1 to run collector, hold L1 to run loader
+    m_operatorController.r1().whileTrue(new RunCollector(m_collector));
+    m_operatorController.l1().whileTrue(new RunLoader(m_loader));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
-    // No autonomous command configured yet
-    // TODO: Add autonomous routines here
     return null;
-  }
-
-  /**
-   * Get the operator controller for use in commands and subsystems.
-   *
-   * @return the operator PS4 controller (port 1)
-   */
-  public CommandPS4Controller getOperatorController() {
-    return m_operatorController;
   }
 }

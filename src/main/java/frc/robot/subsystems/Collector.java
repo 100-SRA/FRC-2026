@@ -1,0 +1,32 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CollectorConstants;
+
+/** Collector (intake) subsystem. Runs a single PWM motor to collect game pieces. */
+public class Collector extends SubsystemBase {
+  private final Spark m_motor;
+
+  public Collector() {
+    m_motor = new Spark(CollectorConstants.kCollectorMotorPort);
+    m_motor.setInverted(CollectorConstants.kCollectorInverted);
+  }
+
+  /** Runs the collector motor at the configured speed. */
+  public void run() {
+    m_motor.set(CollectorConstants.kCollectorSpeed);
+  }
+
+  /** Stops the collector motor. */
+  public void stop() {
+    m_motor.set(0.0);
+  }
+
+  @Override
+  public void periodic() {}
+}

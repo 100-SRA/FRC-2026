@@ -38,4 +38,16 @@ public final class Constants {
     public static final double kMaxSpeed = 1.0;           // Maximum speed multiplier (0.0 to 1.0)
     public static final double kTriggerScale = 0.8;       // Triggers run at 80% power for fine control
   }
+
+  public static class CollectorConstants {
+    public static final int kCollectorMotorPort = 6;      // TODO: set actual PWM port
+    public static final boolean kCollectorInverted = false;
+    public static final double kCollectorSpeed = 0.8;
+  }
+
+  public static class LoaderConstants {
+    public static final int kLoaderMotorPort = 7;         // TODO: set actual PWM port
+    public static final boolean kLoaderInverted = false;
+    public static final double kLoaderSpeed = 0.8;
+  }
 }
