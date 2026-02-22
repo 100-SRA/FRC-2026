@@ -65,11 +65,11 @@ Competition robot code for the 2026 FRC season built with WPILib's command-based
 
 | Input | Function |
 |-------|----------|
-| **R1** (hold) | Run collector — CAN ID 3, SPARK MAX |
-| **L1** (hold) | Run loader — PWM port 4 |
-| **Cross / X** (hold) | Run shooter — PWM port 5 |
+| **R2** (analog, hold) | Collector — speed proportional to trigger pressure |
+| **L2** (analog, hold) | Loader — speed proportional to trigger pressure |
+| **Cross / X** (hold) | Shooter — fixed speed |
 
-> All mechanism buttons are hold-to-run — releasing the button stops the motor immediately.
+> R2 and L2 are analog — squeeze lightly for slow speed, press fully for max speed. Releasing stops the motor immediately. Cross is digital hold-to-run.
 
 ### Tuning Drive Sensitivity
 

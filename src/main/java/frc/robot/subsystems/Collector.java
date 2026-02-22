@@ -18,9 +18,14 @@ public class Collector extends SubsystemBase {
     m_motor.setInverted(CollectorConstants.kCollectorInverted);
   }
 
-  /** Runs the collector motor at the configured speed. */
+  /** Runs the collector motor at the configured fixed speed. */
   public void run() {
     m_motor.set(CollectorConstants.kCollectorSpeed);
+  }
+
+  /** Runs the collector motor at a variable speed (0.0 to 1.0). */
+  public void run(double speed) {
+    m_motor.set(speed);
   }
 
   /** Stops the collector motor. */

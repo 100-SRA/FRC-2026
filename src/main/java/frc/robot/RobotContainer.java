@@ -15,6 +15,7 @@ import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,9 +40,9 @@ public class RobotContainer {
    *   - Right joystick X: turning (arcade)
    *
    * Operator Controller (Port 1):
-   *   - R1 (hold):   run collector (CAN SPARK MAX — set CAN ID in Constants.java)
-   *   - L1 (hold):   run loader   (PWM port 4)
-   *   - Cross (hold): run shooter  (PWM port 5)
+   *   - R2 (analog, hold): collector — speed proportional to trigger pressure
+   *   - L2 (analog, hold): loader    — speed proportional to trigger pressure
+   *   - Cross (hold):      shooter   — fixed speed
    */
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
@@ -62,8 +63,15 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_operatorController.R1().whileTrue(new RunCollector(m_collector));
-    m_operatorController.L1().whileTrue(new RunLoader(m_loader));
+    // Operator R2 (analog) — collector speed proportional to trigger pressure
+    new Trigger(() -> m_operatorController.getR2Axis() > 0.05)
+        .whileTrue(new RunCollector(m_collector, () -> m_operatorController.getR2Axis()));
+
+    // Operator L2 (analog) — loader speed proportional to trigger pressure
+    new Trigger(() -> m_operatorController.getL2Axis() > 0.05)
+        .whileTrue(new RunLoader(m_loader, () -> m_operatorController.getL2Axis()));
+
+    // Operator Cross — shooter at fixed speed
     m_operatorController.cross().whileTrue(new RunShooter(m_shooter));
   }
 

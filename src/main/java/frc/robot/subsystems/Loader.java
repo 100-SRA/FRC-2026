@@ -17,9 +17,14 @@ public class Loader extends SubsystemBase {
     m_motor.setInverted(LoaderConstants.kLoaderInverted);
   }
 
-  /** Runs the loader motor at the configured speed. */
+  /** Runs the loader motor at the configured fixed speed. */
   public void run() {
     m_motor.set(LoaderConstants.kLoaderSpeed);
+  }
+
+  /** Runs the loader motor at a variable speed (0.0 to 1.0). */
+  public void run(double speed) {
+    m_motor.set(speed);
   }
 
   /** Stops the loader motor. */
