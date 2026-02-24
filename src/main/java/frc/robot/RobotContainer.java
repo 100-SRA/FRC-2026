@@ -72,7 +72,7 @@ public class RobotContainer {
         .whileTrue(new RunLoader(m_loader, () -> m_operatorController.getL2Axis()));
 
     // Operator Cross — shooter at fixed speed
-    m_operatorController.cross().whileTrue(new RunShooter(m_shooter));
+    m_operatorController.circle().whileTrue(new RunShooter(m_shooter));
   }
 
   public Command getAutonomousCommand() {
