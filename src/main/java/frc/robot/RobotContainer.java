@@ -36,8 +36,8 @@ public class RobotContainer {
    * Driver Controller (Port 0):
    *   - R2 trigger:       both drive motors forward
    *   - L2 trigger:       both drive motors backward
-   *   - Right joystick Y: forward/backward (arcade)
-   *   - Right joystick X: turning (arcade)
+   *   - Left joystick Y:  left side motors (tank)
+   *   - Right joystick Y: right side motors (tank)
    *
    * Operator Controller (Port 1):
    *   - R2 (analog, hold): collector — speed proportional to trigger pressure
@@ -56,8 +56,8 @@ public class RobotContainer {
     m_drive.setDefaultCommand(
         new TeleopDrive(
             m_drive,
+            () -> m_driverController.getLeftY(),
             () -> m_driverController.getRightY(),
-            () -> m_driverController.getRightX(),
             () -> m_driverController.getR2Axis(),
             () -> m_driverController.getL2Axis()));
   }
