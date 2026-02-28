@@ -5,28 +5,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.LoaderConstants;
 import frc.robot.subsystems.Loader;
-import java.util.function.DoubleSupplier;
 
-/**
- * Runs the loader at a speed proportional to the L2 trigger axis.
- * Activated while the trigger is held past the deadband; releasing stops the motor.
- */
+/** Runs the loader at a fixed speed while the command is active. Use with whileTrue() on a button. */
 public class RunLoader extends Command {
   private final Loader m_loader;
-  private final DoubleSupplier m_speed;
 
-  public RunLoader(Loader loader, DoubleSupplier speed) {
+  public RunLoader(Loader loader) {
     m_loader = loader;
-    m_speed = speed;
     addRequirements(loader);
   }
 
   @Override
   public void execute() {
-    // Normalize L2 axis from [-1.0, 1.0] to [0.0, 1.0]
-    double speed = (m_speed.getAsDouble() + 1.0) / 2.0;
-    m_loader.run(speed);
+    m_loader.run(LoaderConstants.kLoaderSpeed);
   }
 
   @Override

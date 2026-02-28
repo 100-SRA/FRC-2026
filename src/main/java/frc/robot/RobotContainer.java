@@ -40,9 +40,9 @@ public class RobotContainer {
    *   - Right joystick Y: right side motors (tank)
    *
    * Operator Controller (Port 1):
-   *   - R2 (analog, hold): collector — speed proportional to trigger pressure
-   *   - L2 (analog, hold): loader    — speed proportional to trigger pressure
-   *   - Cross (hold):      shooter   — fixed speed
+   *   - R2 (analog, hold): shooter   — speed proportional to trigger pressure
+   *   - L2 (analog, hold): collector — speed proportional to trigger pressure
+   *   - Circle (hold):     loader    — fixed speed
    */
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
@@ -63,16 +63,16 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // Operator R2 (analog) — collector speed proportional to trigger pressure
+    // Operator R2 (analog) — shooter speed proportional to trigger pressure
     new Trigger(() -> m_operatorController.getR2Axis() > 0.05)
-        .whileTrue(new RunCollector(m_collector, () -> m_operatorController.getR2Axis()));
+        .whileTrue(new RunShooter(m_shooter, () -> m_operatorController.getR2Axis()));
 
-    // Operator L2 (analog) — loader speed proportional to trigger pressure
+    // Operator L2 (analog) — collector speed proportional to trigger pressure
     new Trigger(() -> m_operatorController.getL2Axis() > 0.05)
-        .whileTrue(new RunLoader(m_loader, () -> m_operatorController.getL2Axis()));
+        .whileTrue(new RunCollector(m_collector, () -> m_operatorController.getL2Axis()));
 
-    // Operator Cross — shooter at fixed speed
-    m_operatorController.circle().whileTrue(new RunShooter(m_shooter));
+    // Operator Circle — loader at fixed speed
+    m_operatorController.circle().whileTrue(new RunLoader(m_loader));
   }
 
   public Command getAutonomousCommand() {

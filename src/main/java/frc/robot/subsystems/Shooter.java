@@ -17,9 +17,9 @@ public class Shooter extends SubsystemBase {
     m_motor.setInverted(ShooterConstants.kShooterInverted);
   }
 
-  /** Runs the shooter motor at the configured speed. */
-  public void run() {
-    m_motor.set(ShooterConstants.kShooterSpeed);
+  /** Runs the shooter motor at the given speed (0.0 to 1.0). */
+  public void run(double speed) {
+    m_motor.set(speed);
   }
 
   /** Stops the shooter motor. */
