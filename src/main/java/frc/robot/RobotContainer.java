@@ -6,10 +6,13 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.RunCollector;
+import frc.robot.commands.RunCollectorArm;
+import frc.robot.commands.RunCollectorArm.CollectorArmMode;
 import frc.robot.commands.RunLoader;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.CollectorArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
@@ -25,10 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive     m_drive     = new Drive();
-  private final Collector m_collector = new Collector();
-  private final Loader    m_loader    = new Loader();
-  private final Shooter   m_shooter   = new Shooter();
+  private final Drive        m_drive        = new Drive();
+  private final Collector    m_collector    = new Collector();
+  private final Loader       m_loader       = new Loader();
+  private final Shooter      m_shooter      = new Shooter();
+  private final CollectorArm m_collectorArm = new CollectorArm();
 
   /**
    * Controller Configuration:
@@ -40,9 +44,11 @@ public class RobotContainer {
    *   - Right joystick Y: right side motors (tank)
    *
    * Operator Controller (Port 1):
-   *   - R2 (analog, hold): shooter   — speed proportional to trigger pressure
-   *   - L2 (analog, hold): collector — speed proportional to trigger pressure
-   *   - Circle (hold):     loader    — fixed speed
+   *   - R2 (analog, hold): shooter        — speed proportional to trigger pressure
+   *   - L2 (analog, hold): collector      — speed proportional to trigger pressure
+   *   - Circle (hold):     loader         — fixed speed
+   *   - D-pad Up (hold):   collector arm  — retract (wind string)
+   *   - D-pad Down (hold): collector arm  — extend  (unwind string)
    */
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
@@ -73,6 +79,14 @@ public class RobotContainer {
 
     // Operator Circle — loader at fixed speed
     m_operatorController.circle().whileTrue(new RunLoader(m_loader));
+
+    // Operator D-pad Up (hold) — retract collector arm (wind string)
+    m_operatorController.povUp().whileTrue(
+        new RunCollectorArm(m_collectorArm, () -> CollectorArmMode.RETRACT));
+
+    // Operator D-pad Down (hold) — extend collector arm (unwind string)
+    m_operatorController.povDown().whileTrue(
+        new RunCollectorArm(m_collectorArm, () -> CollectorArmMode.EXTEND));
   }
 
   public Command getAutonomousCommand() {

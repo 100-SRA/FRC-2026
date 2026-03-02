@@ -53,4 +53,11 @@ public final class Constants {
     public static final boolean kShooterInverted  = false;
     public static final double kShooterSpeed      = 0.6;
   }
+
+  public static class CollectorArmConstants {
+    public static final int     kCollectorArmMotorPort    = 6;
+    public static final boolean kCollectorArmInverted     = false;
+    public static final double  kCollectorArmRetractSpeed =  0.5;
+    public static final double  kCollectorArmExtendSpeed  = -0.5;
+  }
 }
