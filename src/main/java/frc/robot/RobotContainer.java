@@ -70,11 +70,11 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Operator R2 (analog) — shooter speed proportional to trigger pressure
-    new Trigger(() -> m_operatorController.getR2Axis() > 0.05)
+    new Trigger(() -> m_operatorController.getR2Axis() > -0.95)
         .whileTrue(new RunShooter(m_shooter, () -> m_operatorController.getR2Axis()));
 
     // Operator L2 (analog) — collector speed proportional to trigger pressure
-    new Trigger(() -> m_operatorController.getL2Axis() > 0.05)
+    new Trigger(() -> m_operatorController.getL2Axis() > -0.95)
         .whileTrue(new RunCollector(m_collector, () -> m_operatorController.getL2Axis()));
 
     // Operator Circle — loader at fixed speed
