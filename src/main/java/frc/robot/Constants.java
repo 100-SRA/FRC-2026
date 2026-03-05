@@ -49,9 +49,11 @@ public final class Constants {
   }
 
   public static class ShooterConstants {
-    public static final int kShooterMotorPort     = 5;
-    public static final boolean kShooterInverted  = false;
-    public static final double kShooterSpeed      = 0.6;
+    public static final int kShooterMotorPort      = 5;
+    public static final boolean kShooterInverted   = false;
+    public static final double kShooterSpeed       = 0.6;
+    public static final double kShooterPresetLow   = 0.4; // D-pad Left  — 40% power
+    public static final double kShooterPresetHigh  = 0.8; // D-pad Right — 80% power
   }
 
   public static class CollectorArmConstants {

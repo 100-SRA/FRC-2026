@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.RunCollector;
 import frc.robot.commands.RunCollectorArm;
 import frc.robot.commands.RunCollectorArm.CollectorArmMode;
@@ -49,6 +50,8 @@ public class RobotContainer {
    *   - Circle (hold):     loader         — fixed speed
    *   - D-pad Up (hold):   collector arm  — retract (wind string)
    *   - D-pad Down (hold): collector arm  — extend  (unwind string)
+   *   - D-pad Left (hold): shooter        — fixed 40% speed
+   *   - D-pad Right (hold): shooter       — fixed 80% speed
    */
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
@@ -87,6 +90,18 @@ public class RobotContainer {
     // Operator D-pad Down (hold) — extend collector arm (unwind string)
     m_operatorController.povDown().whileTrue(
         new RunCollectorArm(m_collectorArm, () -> CollectorArmMode.EXTEND));
+
+    // Operator D-pad Left (hold) — shooter at 40% speed
+    m_operatorController.povLeft().whileTrue(
+        m_shooter.runEnd(
+            () -> m_shooter.run(ShooterConstants.kShooterPresetLow),
+            m_shooter::stop));
+
+    // Operator D-pad Right (hold) — shooter at 80% speed
+    m_operatorController.povRight().whileTrue(
+        m_shooter.runEnd(
+            () -> m_shooter.run(ShooterConstants.kShooterPresetHigh),
+            m_shooter::stop));
   }
 
   public Command getAutonomousCommand() {
