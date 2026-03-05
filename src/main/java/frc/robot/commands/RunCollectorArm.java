@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.CollectorArmConstants;
 import frc.robot.subsystems.CollectorArm;
 import java.util.function.Supplier;
 
@@ -20,6 +21,7 @@ public class RunCollectorArm extends Command {
 
   private final CollectorArm               m_arm;
   private final Supplier<CollectorArmMode> m_modeSupplier;
+  private double                           m_rampedExtendSpeed = 0.0;
 
   public RunCollectorArm(CollectorArm arm, Supplier<CollectorArmMode> modeSupplier) {
     m_arm          = arm;
@@ -30,14 +32,27 @@ public class RunCollectorArm extends Command {
   @Override
   public void execute() {
     switch (m_modeSupplier.get()) {
-      case RETRACT -> m_arm.retract();
-      case EXTEND  -> m_arm.extend();
-      default      -> m_arm.stop();
+      case RETRACT -> {
+        m_rampedExtendSpeed = 0.0;  // Reset ramp so next extend starts fresh
+        m_arm.retract();
+      }
+      case EXTEND -> {
+        // Ramp from 0 toward the target extend speed each scheduler cycle (~20ms)
+        // so the arm accelerates gradually instead of jerking to full speed
+        double target = CollectorArmConstants.kCollectorArmExtendSpeed;
+        m_rampedExtendSpeed = Math.max(m_rampedExtendSpeed - CollectorArmConstants.kCollectorArmExtendRampRate, target);
+        m_arm.setSpeed(m_rampedExtendSpeed);
+      }
+      default -> {
+        m_rampedExtendSpeed = 0.0;
+        m_arm.stop();
+      }
     }
   }
 
   @Override
   public void end(boolean interrupted) {
+    m_rampedExtendSpeed = 0.0;
     m_arm.stop();
   }
 

@@ -60,6 +60,8 @@ public final class Constants {
     public static final int     kCollectorArmMotorPort    = 6;
     public static final boolean kCollectorArmInverted     = false;
     public static final double  kCollectorArmRetractSpeed =  0.5;
-    public static final double  kCollectorArmExtendSpeed  = -0.5;
+    public static final double  kCollectorArmExtendSpeed  = -0.3;  // Reduced for softer descent
+    // How much to increase extend speed per scheduler cycle (50Hz → ~0.015/cycle reaches -0.3 in ~0.4s)
+    public static final double  kCollectorArmExtendRampRate = 0.015;
   }
 }

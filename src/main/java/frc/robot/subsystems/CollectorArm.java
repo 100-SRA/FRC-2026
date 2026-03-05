@@ -27,6 +27,11 @@ public class CollectorArm extends SubsystemBase {
     m_motor.set(CollectorArmConstants.kCollectorArmExtendSpeed);
   }
 
+  /** Sets the motor to an exact speed — used by ramp logic in commands. */
+  public void setSpeed(double speed) {
+    m_motor.set(speed);
+  }
+
   /** Stops the motor, holding current position. */
   public void stop() {
     m_motor.set(0.0);
