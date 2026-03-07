@@ -46,6 +46,7 @@ Competition robot code for the 2026 FRC season built with WPILib's command-based
 |-----------|-------|-----------------|
 | PWM 4 | Loader | Spark (PWM) |
 | PWM 5 | Shooter | Spark (PWM) |
+| PWM 6 | Collector Arm | Spark (PWM) |
 | CAN 3 | Collector | REV SPARK MAX |
 
 ## Control Layout
@@ -56,28 +57,32 @@ Competition robot code for the 2026 FRC season built with WPILib's command-based
 |-------|----------|
 | **R2** (hold) | Both drive motors forward |
 | **L2** (hold) | Both drive motors backward |
-| **Right Joystick Y** | Forward / backward (arcade drive) |
-| **Right Joystick X** | Turn left / right (arcade drive) |
+| **Left Joystick Y** | Left side motors (tank drive) |
+| **Right Joystick Y** | Right side motors (tank drive) |
 
-> All inputs blend together — you can combine R2/L2 with the joystick simultaneously.
+> All inputs blend together — you can combine R2/L2 with the joysticks simultaneously.
 
 ### Operator Controller — Port 1 (PS4)
 
 | Input | Function |
 |-------|----------|
-| **R2** (analog, hold) | Collector — speed proportional to trigger pressure |
-| **L2** (analog, hold) | Loader — speed proportional to trigger pressure |
-| **Cross / X** (hold) | Shooter — fixed speed |
+| **R2** (analog, hold) | Shooter — speed proportional to trigger pressure |
+| **L2** (analog, hold) | Collector — speed proportional to trigger pressure |
+| **Circle** (hold) | Loader — fixed speed |
+| **D-pad Up** (hold) | Collector arm — retract (wind string) |
+| **D-pad Down** (hold) | Collector arm — extend (unwind string) |
+| **D-pad Left** (hold) | Shooter — preset 40% speed |
+| **D-pad Right** (hold) | Shooter — preset 80% speed |
 
-> R2 and L2 are analog — squeeze lightly for slow speed, press fully for max speed. Releasing stops the motor immediately. Cross is digital hold-to-run.
+> R2 and L2 are analog — squeeze lightly for slow speed, press fully for max speed. Releasing stops the motor immediately. Circle and D-pad inputs are digital hold-to-run.
 
 ### Tuning Drive Sensitivity
 
 If the robot feels too sensitive or too slow, adjust these values in `Constants.java` under `DriveConstants`:
 
 ```java
-public static final double kJoystickDeadband = 0.05; // Increase if joystick drifts
-public static final double kTriggerDeadband  = 0.05; // Increase if triggers too sensitive
+public static final double kJoystickDeadband = 0.01; // Increase if joystick drifts
+public static final double kTriggerDeadband  = 0.01; // Increase if triggers too sensitive
 public static final double kMaxSpeed         = 1.0;  // Lower for slower max speed (e.g. 0.7)
 public static final double kTriggerScale     = 0.8;  // Lower for gentler trigger response
 ```
@@ -145,9 +150,11 @@ Expected output ends with `BUILD SUCCESSFUL` and `Upload complete`.
 4. Hold L2 only → both sides spin backward, robot moves backward
 
 **Mechanism tests:**
-1. Hold operator **R1** → collector motor runs; release → stops
-2. Hold operator **L1** → loader motor runs; release → stops
-3. Hold operator **Cross** → shooter motor runs; release → stops
+1. Hold operator **L2** → collector motor runs; release → stops
+2. Hold operator **Circle** → loader motor runs; release → stops
+3. Hold operator **R2** → shooter runs (variable speed); release → stops
+4. Hold operator **D-pad Left** → shooter at 40%; **D-pad Right** → shooter at 80%
+5. Hold operator **D-pad Up** → collector arm retracts; **D-pad Down** → arm extends
 
 ### Step 7: End Session Safely
 
@@ -165,14 +172,16 @@ src/main/java/frc/robot/
 ├── RobotContainer.java              # Subsystems, controllers, bindings
 ├── Constants.java                   # All configuration constants
 ├── commands/
-│   ├── TeleopDrive.java             # R2/L2/joystick drive command
-│   ├── RunCollector.java            # Hold-to-run collector command
-│   ├── RunLoader.java               # Hold-to-run loader command
-│   ├── RunShooter.java              # Hold-to-run shooter command
+│   ├── TeleopDrive.java             # R2/L2/joystick tank drive command
+│   ├── RunCollector.java            # Hold-to-run collector command (L2 analog)
+│   ├── RunCollectorArm.java         # Hold-to-run collector arm command (D-pad Up/Down)
+│   ├── RunLoader.java               # Hold-to-run loader command (Circle)
+│   ├── RunShooter.java              # Hold-to-run shooter command (R2 analog)
 │   └── Autos.java                   # Autonomous routines (placeholder)
 └── subsystems/
     ├── Drive.java                   # 4-motor tank drive subsystem
     ├── Collector.java               # Collector (CAN SPARK MAX)
+    ├── CollectorArm.java            # Collector arm (PWM, with extend ramp)
     ├── Loader.java                  # Loader (PWM)
     └── Shooter.java                 # Shooter (PWM)
 ```
