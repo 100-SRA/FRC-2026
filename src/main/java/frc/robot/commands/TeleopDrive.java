@@ -53,9 +53,8 @@ public class TeleopDrive extends Command {
 
   @Override
   public void execute() {
-    // Invert Y so pushing forward = positive
-    double leftSpeed  = -m_leftY.getAsDouble();
-    double rightSpeed = -m_rightY.getAsDouble();
+    double leftSpeed  = m_leftY.getAsDouble();
+    double rightSpeed = m_rightY.getAsDouble();
 
     // Normalize triggers from [-1.0, 1.0] to [0.0, 1.0]
     double r2 = (m_r2Trigger.getAsDouble() + 1.0) / 2.0;
