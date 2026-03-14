@@ -51,7 +51,8 @@ public class RobotContainer {
    *   - D-pad Up (hold):   collector arm  — retract (wind string)
    *   - D-pad Down (hold): collector arm  — extend  (unwind string)
    *   - D-pad Left (hold): shooter        — fixed 40% speed
-   *   - D-pad Right (hold): shooter       — fixed 80% speed
+   *   - D-pad Right (hold): shooter       — fixed 70% speed
+   *   - Square (hold):     shooter        — reverse (unjam)
    */
   private final CommandPS4Controller m_driverController =
       new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
@@ -97,10 +98,16 @@ public class RobotContainer {
             () -> m_shooter.run(ShooterConstants.kShooterPresetLow),
             m_shooter::stop));
 
-    // Operator D-pad Right (hold) — shooter at 80% speed
+    // Operator D-pad Right (hold) — shooter at 70% speed
     m_operatorController.povRight().whileTrue(
         m_shooter.runEnd(
             () -> m_shooter.run(ShooterConstants.kShooterPresetHigh),
+            m_shooter::stop));
+
+    // Operator Square (hold) — reverse shooter to unjam stuck fuel
+    m_operatorController.square().whileTrue(
+        m_shooter.runEnd(
+            () -> m_shooter.run(-ShooterConstants.kShooterPresetLow),
             m_shooter::stop));
   }
 
