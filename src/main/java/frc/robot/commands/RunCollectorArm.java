@@ -45,7 +45,7 @@ public class RunCollectorArm extends Command {
       }
       default -> {
         m_rampedExtendSpeed = 0.0;
-        m_arm.stop();
+        m_arm.setSpeed(CollectorArmConstants.kCollectorArmHoldSpeed);
       }
     }
   }
