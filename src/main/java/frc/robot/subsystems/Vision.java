@@ -106,9 +106,11 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Cache distance once to avoid multiple getLatestResult() calls per cycle
     double distance = getDistanceMeters();
-    SmartDashboard.putBoolean("Vision/HasTarget",      hasTarget());
-    SmartDashboard.putNumber("Vision/DistanceMeters",  distance);
-    SmartDashboard.putNumber("Vision/ShooterSpeed",    getCalculatedShooterSpeed());
+    double speed    = distance > 0 ? getCalculatedShooterSpeed() : -1.0;
+    SmartDashboard.putBoolean("Vision/HasTarget",     distance > 0);
+    SmartDashboard.putNumber("Vision/DistanceMeters", distance);
+    SmartDashboard.putNumber("Vision/ShooterSpeed",   speed);
   }
 }
