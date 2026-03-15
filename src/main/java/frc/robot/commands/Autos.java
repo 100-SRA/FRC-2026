@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-// import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Shooter;
 import frc.robot.Constants.ShooterConstants;
@@ -27,20 +27,18 @@ public final class Autos {
    * Tune kAutoDriveSpeed and kAutoShootTime to match your robot on the field.
    */
   public static Command driveAndShoot(Drive drive, Shooter shooter) {
-    // return new SequentialCommandGroup(
-    //     // Step 1: Drive straight forward for 2 seconds
-    //     Commands.run(() -> drive.tankDrive(0.5, 0.5), drive)
-    //             .withTimeout(2.0),
-    //     // Step 2: Stop driving
-    //     Commands.runOnce(drive::stop, drive),
-    //     // Step 3: Spin up shooter and fire for 3 seconds
-    //     Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter)
-    //             .withTimeout(3.0),
-    //     // Step 4: Stop shooter
-    //     Commands.runOnce(shooter::stop, shooter)
-    // );
-
-    return Commands.none(); // Remove this line when enabling auto above
+    return new SequentialCommandGroup(
+        // Step 1: Drive straight forward for 2 seconds
+        Commands.run(() -> drive.tankDrive(0.5, 0.5), drive)
+                .withTimeout(2.0),
+        // Step 2: Stop driving
+        Commands.runOnce(drive::stop, drive),
+        // Step 3: Spin up shooter and fire for 3 seconds
+        Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter)
+                .withTimeout(3.0),
+        // Step 4: Stop shooter
+        Commands.runOnce(shooter::stop, shooter)
+    );
   }
 
   /**
