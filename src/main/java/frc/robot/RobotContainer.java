@@ -112,6 +112,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
+    // return Autos.driveAndShoot(m_drive, m_shooter); // Uncomment to enable auto
     return null;
   }
 }
