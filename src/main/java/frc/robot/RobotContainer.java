@@ -112,6 +112,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Autos.driveAndShoot(m_drive, m_shooter);
+    return Autos.driveAndShoot(m_drive, m_shooter, m_loader);
   }
 }
