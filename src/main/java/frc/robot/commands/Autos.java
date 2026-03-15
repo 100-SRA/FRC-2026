@@ -34,7 +34,7 @@ public final class Autos {
         // Step 2: Stop driving
         Commands.runOnce(drive::stop, drive),
         // Step 3: Spin up shooter and fire for 3 seconds
-        Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter)
+        Commands.run(() -> shooter.run(-ShooterConstants.kShooterPresetHigh), shooter)
                 .withTimeout(3.0),
         // Step 4: Stop shooter
         Commands.runOnce(shooter::stop, shooter)
