@@ -17,6 +17,7 @@ import frc.robot.subsystems.CollectorArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -34,6 +35,7 @@ public class RobotContainer {
   private final Loader       m_loader       = new Loader();
   private final Shooter      m_shooter      = new Shooter();
   private final CollectorArm m_collectorArm = new CollectorArm();
+  private final Vision       m_vision       = new Vision();
 
   /**
    * Controller Configuration:
@@ -112,6 +114,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Autos.driveAndShoot(m_drive, m_shooter, m_loader);
+    return Autos.visionDriveAndShoot(m_drive, m_shooter, m_loader, m_vision);
   }
 }

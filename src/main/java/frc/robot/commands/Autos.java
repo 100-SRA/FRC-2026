@@ -7,11 +7,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.CollectorArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
+import frc.robot.Constants.CollectorArmConstants;
 import frc.robot.Constants.ShooterConstants;
-// import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Vision;
 
 /**
  * Utility class for autonomous command factories.
@@ -38,7 +41,7 @@ public final class Autos {
         Commands.parallel(
             Commands.run(() -> shooter.run(-ShooterConstants.kShooterPresetHigh), shooter),
             Commands.run(loader::run, loader)
-        ).withTimeout(3.0),
+        ).withTimeout(10.0),
         // Step 4: Stop shooter and loader
         Commands.runOnce(shooter::stop, shooter),
         Commands.runOnce(loader::stop, loader)
@@ -53,24 +56,75 @@ public final class Autos {
    *   2. Add a Vision instance to RobotContainer and pass it here.
    *   3. Uncomment this method body and the Vision import at the top of this file.
    */
-  // public static Command visionDriveAndShoot(Drive drive, Shooter shooter, Vision vision) {
+  /**
+   * Full auto cycle: extend arm → drive forward to collect fuel → retract → drive back → shoot.
+   *
+   * TUNING NOTES (adjust these timeouts based on field testing):
+   *   - Arm extend time:     how long it takes the arm to fully lower
+   *   - Collect drive time:  how far forward to travel to reach fuel
+   *   - Arm retract time:    how long it takes the arm to fully raise
+   *   - Return drive time:   how far back to travel to reach shooting position
+   *
+   * To enable: remove the block comment markers below and pass instances from RobotContainer.
+   */
+  // public static Command collectAndShoot(
+  //     Drive drive, Collector collector, CollectorArm arm, Shooter shooter, Loader loader) {
   //   return new SequentialCommandGroup(
-  //       // Step 1: Drive forward until a target is visible (max 3 seconds)
-  //       Commands.run(() -> drive.tankDrive(0.4, 0.4), drive)
-  //               .until(vision::hasTarget)
-  //               .withTimeout(3.0),
-  //       // Step 2: Stop driving
+  //       // Step 1: Lower the collector arm while running the intake
+  //       Commands.parallel(
+  //           Commands.run(arm::extend, arm),
+  //           Commands.run(collector::run, collector)
+  //       ).withTimeout(1.5),                              // tune: arm extend time
+  //       // Step 2: Drive forward slowly to scoop up fuel (intake still running)
+  //       Commands.parallel(
+  //           Commands.run(() -> drive.tankDrive(0.3, 0.3), drive),
+  //           Commands.run(collector::run, collector)
+  //       ).withTimeout(2.0),                              // tune: collection drive time
+  //       // Step 3: Stop driving, stop collector
   //       Commands.runOnce(drive::stop, drive),
-  //       // Step 3: Shoot at speed calculated from distance, for 3 seconds
-  //       //         Falls back to preset high speed if no target is found
-  //       Commands.run(() -> {
-  //           double speed = vision.getCalculatedShooterSpeed();
-  //           shooter.run(speed > 0 ? speed : ShooterConstants.kShooterPresetHigh);
-  //       }, shooter).withTimeout(3.0),
-  //       // Step 4: Stop shooter
-  //       Commands.runOnce(shooter::stop, shooter)
+  //       Commands.runOnce(collector::stop, collector),
+  //       // Step 4: Retract the arm
+  //       Commands.run(arm::retract, arm)
+  //               .withTimeout(1.5),                       // tune: arm retract time
+  //       Commands.runOnce(arm::stop, arm),
+  //       // Step 5: Drive back toward the goal
+  //       Commands.run(() -> drive.tankDrive(-0.5, -0.5), drive)
+  //               .withTimeout(2.0),                       // tune: return drive time
+  //       Commands.runOnce(drive::stop, drive),
+  //       // Step 6: Fire — run shooter and loader simultaneously
+  //       Commands.parallel(
+  //           Commands.run(() -> shooter.run(-ShooterConstants.kShooterPresetHigh), shooter),
+  //           Commands.run(loader::run, loader)
+  //       ).withTimeout(3.0),
+  //       // Step 7: Stop everything
+  //       Commands.runOnce(shooter::stop, shooter),
+  //       Commands.runOnce(loader::stop, loader)
   //   );
   // }
+
+  public static Command visionDriveAndShoot(
+      Drive drive, Shooter shooter, Loader loader, Vision vision) {
+    return new SequentialCommandGroup(
+        // Step 1: Drive forward until a target is visible (max 3 seconds)
+        Commands.run(() -> drive.tankDrive(0.4, 0.4), drive)
+                .until(vision::hasTarget)
+                .withTimeout(3.0),
+        // Step 2: Stop driving
+        Commands.runOnce(drive::stop, drive),
+        // Step 3: Spin up shooter at vision-calculated speed, then feed with loader
+        //         Falls back to full power if no target is visible
+        Commands.parallel(
+            Commands.run(() -> {
+                double speed = vision.getCalculatedShooterSpeed();
+                shooter.run(speed > 0 ? speed : ShooterConstants.kShooterPresetHigh);
+            }, shooter),
+            Commands.run(loader::run, loader)
+        ).withTimeout(10.0),
+        // Step 4: Stop shooter and loader
+        Commands.runOnce(shooter::stop, shooter),
+        Commands.runOnce(loader::stop, loader)
+    );
+  }
 
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");

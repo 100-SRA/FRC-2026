@@ -39,13 +39,13 @@ public final class Constants {
   public static class CollectorConstants {
     public static final int kCollectorCanId       = 3;
     public static final boolean kCollectorInverted = false;
-    public static final double kCollectorSpeed    = 0.8;
+    public static final double kCollectorSpeed    = 1.0;
   }
 
   public static class LoaderConstants {
     public static final int kLoaderMotorPort      = 4;
     public static final boolean kLoaderInverted   = false;
-    public static final double kLoaderSpeed       = 0.8;
+    public static final double kLoaderSpeed       = 1.0;
   }
 
   public static class ShooterConstants {
