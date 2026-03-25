@@ -59,6 +59,7 @@ public class Vision extends SubsystemBase {
   // -------------------------------------------------------------------------
 
   private final PhotonCamera m_camera;
+  private int m_dashboardCycleCount = 0;
 
   public Vision() {
     m_camera = new PhotonCamera(CAMERA_NAME);
@@ -106,11 +107,15 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Cache distance once to avoid multiple getLatestResult() calls per cycle
-    double distance = getDistanceMeters();
-    double speed    = distance > 0 ? getCalculatedShooterSpeed() : -1.0;
-    SmartDashboard.putBoolean("Vision/HasTarget",     distance > 0);
-    SmartDashboard.putNumber("Vision/DistanceMeters", distance);
-    SmartDashboard.putNumber("Vision/ShooterSpeed",   speed);
+    // Update dashboard at 10Hz (every 5 cycles) instead of 50Hz to reduce DS overhead
+    m_dashboardCycleCount++;
+    if (m_dashboardCycleCount >= 5) {
+      m_dashboardCycleCount = 0;
+      double distance = getDistanceMeters();
+      double speed    = distance > 0 ? getCalculatedShooterSpeed() : -1.0;
+      SmartDashboard.putBoolean("Vision/HasTarget",     distance > 0);
+      SmartDashboard.putNumber("Vision/DistanceMeters", distance);
+      SmartDashboard.putNumber("Vision/ShooterSpeed",   speed);
+    }
   }
 }

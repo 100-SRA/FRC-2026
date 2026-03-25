@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drive;
 import frc.robot.Constants.DriveConstants;
@@ -23,6 +24,9 @@ public class TeleopDrive extends Command {
   private final DoubleSupplier m_rightY;
   private final DoubleSupplier m_r2Trigger;
   private final DoubleSupplier m_l2Trigger;
+
+  private final SlewRateLimiter m_leftLimiter  = new SlewRateLimiter(DriveConstants.kDriveSlewRate);
+  private final SlewRateLimiter m_rightLimiter = new SlewRateLimiter(DriveConstants.kDriveSlewRate);
 
   /**
    * Creates a new TeleopDrive command.
@@ -66,6 +70,10 @@ public class TeleopDrive extends Command {
     r2 = applyDeadband(r2, DriveConstants.kTriggerDeadband);
     l2 = applyDeadband(l2, DriveConstants.kTriggerDeadband);
 
+    // Square joystick inputs: small movements → finer control, full stick → still 100%
+    leftSpeed  = squareInput(leftSpeed);
+    rightSpeed = squareInput(rightSpeed);
+
     // Scale triggers
     r2 *= DriveConstants.kTriggerScale;
     l2 *= DriveConstants.kTriggerScale;
@@ -78,6 +86,10 @@ public class TeleopDrive extends Command {
     // Clamp to [-1.0, 1.0]
     leftSpeed  = Math.max(-1.0, Math.min(1.0, leftSpeed));
     rightSpeed = Math.max(-1.0, Math.min(1.0, rightSpeed));
+
+    // Slew rate limit to smooth acceleration and reduce jerk
+    leftSpeed  = m_leftLimiter.calculate(leftSpeed);
+    rightSpeed = m_rightLimiter.calculate(rightSpeed);
 
     m_drive.tankDrive(leftSpeed, rightSpeed);
   }
@@ -97,5 +109,9 @@ public class TeleopDrive extends Command {
       return 0.0;
     }
     return value;
+  }
+
+  private double squareInput(double input) {
+    return Math.signum(input) * input * input;
   }
 }
