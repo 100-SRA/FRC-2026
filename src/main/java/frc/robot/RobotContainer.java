@@ -8,12 +8,15 @@ import frc.robot.Constants.CollectorConstants;
 import frc.robot.Constants.LoaderConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.RunClimb;
+import frc.robot.commands.RunClimb.ClimbDirection;
 import frc.robot.commands.RunCollector;
 import frc.robot.commands.RunCollectorArm;
 import frc.robot.commands.RunCollectorArm.CollectorArmMode;
 import frc.robot.commands.RunLoader;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.CollectorArm;
 import frc.robot.subsystems.Drive;
@@ -38,6 +41,7 @@ public class RobotContainer {
   private final Shooter      m_shooter      = new Shooter();
   private final CollectorArm m_collectorArm = new CollectorArm();
   private final Vision       m_vision       = new Vision();
+  private final Climb        m_climb        = new Climb();
 
   /**
    * Controller Configuration:
@@ -47,6 +51,8 @@ public class RobotContainer {
    *   - L2 trigger:        both drive motors backward
    *   - Left joystick Y:   left side motors (tank)
    *   - Right joystick Y:  right side motors (tank)
+   *   - R1 (hold):         climb up
+   *   - L1 (hold):         climb down
    *
    * Operator Controller (Port 1):
    *   - R2 (analog, hold): shooter         — speed proportional to trigger pressure
@@ -134,6 +140,12 @@ public class RobotContainer {
         m_shooter.runEnd(
             () -> m_shooter.run(ShooterConstants.kShooterPresetHigh),
             m_shooter::stop));
+
+    // Driver R1 (hold) — climb up
+    m_driverController.R1().whileTrue(new RunClimb(m_climb, ClimbDirection.UP));
+
+    // Driver L1 (hold) — climb down
+    m_driverController.L1().whileTrue(new RunClimb(m_climb, ClimbDirection.DOWN));
   }
 
   public Command getAutonomousCommand() {

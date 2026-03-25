@@ -68,4 +68,13 @@ public final class Constants {
     // Small retract voltage applied when idle to prevent string from unwinding under gravity
     public static final double  kCollectorArmHoldSpeed      =  0.05;
   }
+
+  public static class ClimbConstants {
+    public static final int     kClimbLeftCanId       = 6;
+    public static final int     kClimbRightCanId      = 7;
+    public static final boolean kClimbLeftInverted    = false;
+    public static final boolean kClimbRightInverted   = true;  // Opposite side — invert so both pull up
+    public static final double  kClimbUpSpeed         = 1.0;
+    public static final double  kClimbDownSpeed       = -1.0;
+  }
 }
