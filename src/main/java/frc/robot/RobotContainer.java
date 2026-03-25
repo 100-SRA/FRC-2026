@@ -106,8 +106,9 @@ public class RobotContainer {
             () -> m_collector.run(-CollectorConstants.kCollectorSpeed),
             m_collector::stop));
 
-    // Operator Circle (hold) — loader at fixed speed (feed)
-    m_operatorController.circle().whileTrue(new RunLoader(m_loader));
+    // Operator Circle (hold) — loader at fixed speed, only once shooter has spun up to threshold speed
+    Trigger shooterReady = new Trigger(m_shooter::isReadyToShoot);
+    m_operatorController.circle().and(shooterReady).whileTrue(new RunLoader(m_loader));
 
     // Operator Square (hold) — reverse loader to unjam
     m_operatorController.square().whileTrue(

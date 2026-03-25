@@ -31,7 +31,7 @@ public final class Autos {
         Commands.runOnce(drive::stop, drive),
         // Step 3: Run shooter and loader simultaneously for 10 seconds
         Commands.parallel(
-            Commands.run(() -> shooter.run(-ShooterConstants.kShooterPresetHigh), shooter),
+            Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter),
             Commands.run(loader::run, loader)
         ).withTimeout(10.0),
         // Step 4: Stop shooter and loader

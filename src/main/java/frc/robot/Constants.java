@@ -56,6 +56,10 @@ public final class Constants {
     public static final double kShooterPresetMin   = 0.1; // X button     — 10% power (close range)
     public static final double kShooterPresetLow   = 0.4; // D-pad Left   — 40% power
     public static final double kShooterPresetHigh  = 0.7; // D-pad Right  — 70% power
+
+    // Shooter-loader interlock — loader only activates when shooter is at speed
+    public static final double kShooterReadyThreshold = 0.5;  // 50% commanded = "at speed"
+    public static final double kShooterSpinUpSeconds  = 0.75; // seconds at threshold before loader is allowed
   }
 
   public static class CollectorArmConstants {
