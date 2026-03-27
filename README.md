@@ -68,11 +68,15 @@ Competition robot code for the 2026 FRC season built with WPILib's command-based
 |-------|----------|
 | **R2** (analog, hold) | Shooter — speed proportional to trigger pressure |
 | **L2** (analog, hold) | Collector — speed proportional to trigger pressure |
-| **Circle** (hold) | Loader — fixed speed |
+| **R1** (hold) | Shooter — reverse (unjam) |
+| **L1** (hold) | Collector — reverse (eject) |
+| **Circle** (hold) | Loader — fixed speed (feed) |
+| **Square** (hold) | Loader — reverse (unjam) |
+| **X** (hold) | Shooter — 10% preset (close range) |
 | **D-pad Up** (hold) | Collector arm — retract (wind string) |
 | **D-pad Down** (hold) | Collector arm — extend (unwind string) |
 | **D-pad Left** (hold) | Shooter — preset 40% speed |
-| **D-pad Right** (hold) | Shooter — preset 80% speed |
+| **D-pad Right** (hold) | Shooter — preset 70% speed |
 
 > R2 and L2 are analog — squeeze lightly for slow speed, press fully for max speed. Releasing stops the motor immediately. Circle and D-pad inputs are digital hold-to-run.
 
@@ -153,7 +157,7 @@ Expected output ends with `BUILD SUCCESSFUL` and `Upload complete`.
 1. Hold operator **L2** → collector motor runs; release → stops
 2. Hold operator **Circle** → loader motor runs; release → stops
 3. Hold operator **R2** → shooter runs (variable speed); release → stops
-4. Hold operator **D-pad Left** → shooter at 40%; **D-pad Right** → shooter at 80%
+4. Hold operator **D-pad Left** → shooter at 40%; **D-pad Right** → shooter at 70%
 5. Hold operator **D-pad Up** → collector arm retracts; **D-pad Down** → arm extends
 
 ### Step 7: End Session Safely
@@ -177,13 +181,14 @@ src/main/java/frc/robot/
 │   ├── RunCollectorArm.java         # Hold-to-run collector arm command (D-pad Up/Down)
 │   ├── RunLoader.java               # Hold-to-run loader command (Circle)
 │   ├── RunShooter.java              # Hold-to-run shooter command (R2 analog)
-│   └── Autos.java                   # Autonomous routines (placeholder)
+│   └── Autos.java                   # Autonomous routines (drive + vision-based shoot)
 └── subsystems/
     ├── Drive.java                   # 4-motor tank drive subsystem
     ├── Collector.java               # Collector (CAN SPARK MAX)
     ├── CollectorArm.java            # Collector arm (PWM, with extend ramp)
     ├── Loader.java                  # Loader (PWM)
-    └── Shooter.java                 # Shooter (PWM)
+    ├── Shooter.java                 # Shooter (PWM)
+    └── Vision.java                  # PhotonVision distance estimation & shooter speed calc
 ```
 
 ## Troubleshooting
@@ -205,6 +210,10 @@ src/main/java/frc/robot/
 
 **Joystick drift:**
 - Increase `kJoystickDeadband` in `Constants.java`
+
+**Vision autonomous not working / robot drives past target:**
+- Confirm the camera name in `Vision.java` (`CAMERA_NAME`) matches exactly what appears in the PhotonVision dashboard at `http://photonvision.local:5800` (case-sensitive)
+- Tune `MIN_DISTANCE_METERS`, `MAX_DISTANCE_METERS`, and the speed range in `Vision.java` based on field testing
 
 **Build fails:**
 - Run `./gradlew clean build`
@@ -232,6 +241,7 @@ src/main/java/frc/robot/
 
 - **WPILib 2026.2.1** — FRC robotics framework
 - **REVLib 2026.0.1** — REV Robotics SPARK MAX library (`com.revrobotics.spark.SparkMax`)
+- **PhotonVision** — Vision processing for target detection and distance estimation
 - **Java 17** — Programming language
 
 ## Team Information
