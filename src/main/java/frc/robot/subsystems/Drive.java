@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -17,7 +16,8 @@ import frc.robot.Constants.DriveConstants;
  * Control scheme:
  * - R2 trigger: both sides forward
  * - L2 trigger: both sides backward
- * - Right joystick: arcade drive (Y = forward/back, X = turn)
+ * - Left joystick Y: left side motors (tank)
+ * - Right joystick Y: right side motors (tank)
  */
 public class Drive extends SubsystemBase {
   // Left side motors (PWM ports 0 and 1)
@@ -28,10 +28,6 @@ public class Drive extends SubsystemBase {
   private final Spark m_rightFront;
   private final Spark m_rightBack;
 
-  // Motor controller groups for synchronized control
-  private final MotorControllerGroup m_leftMotors;
-  private final MotorControllerGroup m_rightMotors;
-
   /** Creates a new Drive subsystem. */
   public Drive() {
     m_leftFront  = new Spark(DriveConstants.kLeftFrontMotorPort);
@@ -39,11 +35,10 @@ public class Drive extends SubsystemBase {
     m_rightFront = new Spark(DriveConstants.kRightFrontMotorPort);
     m_rightBack  = new Spark(DriveConstants.kRightBackMotorPort);
 
-    m_leftMotors  = new MotorControllerGroup(m_leftFront, m_leftBack);
-    m_rightMotors = new MotorControllerGroup(m_rightFront, m_rightBack);
-
-    m_leftMotors.setInverted(DriveConstants.kLeftMotorsInverted);
-    m_rightMotors.setInverted(DriveConstants.kRightMotorsInverted);
+    m_leftFront.setInverted(DriveConstants.kLeftMotorsInverted);
+    m_leftBack.setInverted(DriveConstants.kLeftMotorsInverted);
+    m_rightFront.setInverted(DriveConstants.kRightMotorsInverted);
+    m_rightBack.setInverted(DriveConstants.kRightMotorsInverted);
   }
 
   /**
@@ -55,14 +50,18 @@ public class Drive extends SubsystemBase {
   public void tankDrive(double leftSpeed, double rightSpeed) {
     leftSpeed  = Math.max(-1.0, Math.min(1.0, leftSpeed))  * DriveConstants.kMaxSpeed;
     rightSpeed = Math.max(-1.0, Math.min(1.0, rightSpeed)) * DriveConstants.kMaxSpeed;
-    m_leftMotors.set(leftSpeed);
-    m_rightMotors.set(rightSpeed);
+    m_leftFront.set(leftSpeed);
+    m_leftBack.set(leftSpeed);
+    m_rightFront.set(rightSpeed);
+    m_rightBack.set(rightSpeed);
   }
 
   /** Stops all drive motors immediately. */
   public void stop() {
-    m_leftMotors.set(0.0);
-    m_rightMotors.set(0.0);
+    m_leftFront.set(0.0);
+    m_leftBack.set(0.0);
+    m_rightFront.set(0.0);
+    m_rightBack.set(0.0);
   }
 
   @Override
