@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CollectorArmConstants;
 
-/** Winds/unwinds a string via PWM Spark on port 6 to retract or extend the collector arm. */
+/** Winds/unwinds a string via PWM Spark to retract or extend the collector arm. */
 public class CollectorArm extends SubsystemBase {
   private final Spark m_motor;
 
@@ -36,7 +36,4 @@ public class CollectorArm extends SubsystemBase {
   public void stop() {
     m_motor.set(0.0);
   }
-
-  @Override
-  public void periodic() {}
 }

@@ -62,7 +62,7 @@ public final class Constants {
   }
 
   public static class CollectorArmConstants {
-    public static final int     kCollectorArmMotorPort    = 6;
+    public static final int     kCollectorArmMotorPort    = 3;
     public static final boolean kCollectorArmInverted     = false;
     public static final double  kCollectorArmRetractSpeed =  0.5;
     public static final double  kCollectorArmExtendSpeed  = -0.3;  // Reduced for softer descent

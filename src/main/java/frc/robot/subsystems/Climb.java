@@ -38,7 +38,4 @@ public class Climb extends SubsystemBase {
     m_leftMotor.set(0.0);
     m_rightMotor.set(0.0);
   }
-
-  @Override
-  public void periodic() {}
 }

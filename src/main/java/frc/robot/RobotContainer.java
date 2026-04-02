@@ -150,6 +150,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Autos.visionDriveAndShoot(m_drive, m_shooter, m_loader, m_vision);
+    return Autos.climb(m_climb);
   }
 }

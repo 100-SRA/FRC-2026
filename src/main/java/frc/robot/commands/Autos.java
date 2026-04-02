@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
@@ -17,6 +18,17 @@ import frc.robot.subsystems.Vision;
  * Utility class for autonomous command factories.
  */
 public final class Autos {
+
+  /**
+   * Primary auto: climb up for the full autonomous period (15 seconds).
+   */
+  public static Command climb(Climb climb) {
+    return new SequentialCommandGroup(
+        Commands.run(climb::climbUp, climb)
+                .withTimeout(15.0),
+        Commands.runOnce(climb::stop, climb)
+    );
+  }
 
   /**
    * Fallback auto: drive straight for 2 seconds, then shoot for 10 seconds.

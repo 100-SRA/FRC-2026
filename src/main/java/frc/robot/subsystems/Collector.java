@@ -32,7 +32,4 @@ public class Collector extends SubsystemBase {
   public void stop() {
     m_motor.set(0.0);
   }
-
-  @Override
-  public void periodic() {}
 }

@@ -91,6 +91,16 @@ public class Vision extends SubsystemBase {
   }
 
   /**
+   * Maps a known distance to a shooter speed using linear interpolation.
+   * Clamps to [SPEED_AT_MIN_DISTANCE, SPEED_AT_MAX_DISTANCE] for safety.
+   */
+  private double speedFromDistance(double distance) {
+    double t = (distance - MIN_DISTANCE_METERS) / (MAX_DISTANCE_METERS - MIN_DISTANCE_METERS);
+    t = Math.max(0.0, Math.min(1.0, t));
+    return SPEED_AT_MIN_DISTANCE + t * (SPEED_AT_MAX_DISTANCE - SPEED_AT_MIN_DISTANCE);
+  }
+
+  /**
    * Maps the estimated distance to a shooter speed using linear interpolation.
    * Clamps to [SPEED_AT_MIN_DISTANCE, SPEED_AT_MAX_DISTANCE] for safety.
    * Returns -1 if no target is visible.
@@ -98,11 +108,7 @@ public class Vision extends SubsystemBase {
   public double getCalculatedShooterSpeed() {
     double distance = getDistanceMeters();
     if (distance < 0) return -1.0;
-
-    double t = (distance - MIN_DISTANCE_METERS) / (MAX_DISTANCE_METERS - MIN_DISTANCE_METERS);
-    t = Math.max(0.0, Math.min(1.0, t)); // clamp to [0, 1]
-
-    return SPEED_AT_MIN_DISTANCE + t * (SPEED_AT_MAX_DISTANCE - SPEED_AT_MIN_DISTANCE);
+    return speedFromDistance(distance);
   }
 
   @Override
@@ -112,7 +118,7 @@ public class Vision extends SubsystemBase {
     if (m_dashboardCycleCount >= 5) {
       m_dashboardCycleCount = 0;
       double distance = getDistanceMeters();
-      double speed    = distance > 0 ? getCalculatedShooterSpeed() : -1.0;
+      double speed    = distance > 0 ? speedFromDistance(distance) : -1.0;
       SmartDashboard.putBoolean("Vision/HasTarget",     distance > 0);
       SmartDashboard.putNumber("Vision/DistanceMeters", distance);
       SmartDashboard.putNumber("Vision/ShooterSpeed",   speed);
