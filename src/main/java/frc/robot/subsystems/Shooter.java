@@ -58,6 +58,4 @@ public class Shooter extends SubsystemBase {
     return m_timerRunning && m_spinUpTimer.hasElapsed(ShooterConstants.kShooterSpinUpSeconds);
   }
 
-  @Override
-  public void periodic() {}
 }

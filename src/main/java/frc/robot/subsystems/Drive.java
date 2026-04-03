@@ -70,6 +70,4 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putNumber("Drive/Right Speed", m_rightFront.get());
   }
 
-  @Override
-  public void simulationPeriodic() {}
 }

@@ -181,14 +181,13 @@ src/main/java/frc/robot/
 │   ├── RunCollectorArm.java         # Hold-to-run collector arm command (D-pad Up/Down)
 │   ├── RunLoader.java               # Hold-to-run loader command (Circle)
 │   ├── RunShooter.java              # Hold-to-run shooter command (R2 analog)
-│   └── Autos.java                   # Autonomous routines (drive + vision-based shoot)
+│   └── Autos.java                   # Autonomous routines
 └── subsystems/
     ├── Drive.java                   # 4-motor tank drive subsystem
     ├── Collector.java               # Collector (CAN SPARK MAX)
     ├── CollectorArm.java            # Collector arm (PWM, with extend ramp)
     ├── Loader.java                  # Loader (PWM)
-    ├── Shooter.java                 # Shooter (PWM)
-    └── Vision.java                  # PhotonVision distance estimation & shooter speed calc
+    └── Shooter.java                 # Shooter (PWM)
 ```
 
 ## Troubleshooting
@@ -210,10 +209,6 @@ src/main/java/frc/robot/
 
 **Joystick drift:**
 - Increase `kJoystickDeadband` in `Constants.java`
-
-**Vision autonomous not working / robot drives past target:**
-- Confirm the camera name in `Vision.java` (`CAMERA_NAME`) matches exactly what appears in the PhotonVision dashboard at `http://photonvision.local:5800` (case-sensitive)
-- Tune `MIN_DISTANCE_METERS`, `MAX_DISTANCE_METERS`, and the speed range in `Vision.java` based on field testing
 
 **Build fails:**
 - Run `./gradlew clean build`
@@ -241,7 +236,6 @@ src/main/java/frc/robot/
 
 - **WPILib 2026.2.1** — FRC robotics framework
 - **REVLib 2026.0.1** — REV Robotics SPARK MAX library (`com.revrobotics.spark.SparkMax`)
-- **PhotonVision** — Vision processing for target detection and distance estimation
 - **Java 17** — Programming language
 
 ## Team Information
