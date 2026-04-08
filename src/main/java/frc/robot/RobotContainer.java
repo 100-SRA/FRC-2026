@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.Constants.CollectorConstants;
-import frc.robot.Constants.LoaderConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.RunClimb;
@@ -55,10 +54,8 @@ public class RobotContainer {
    * Operator Controller (Port 1):
    *   - R2 (analog, hold): shooter         — speed proportional to trigger pressure
    *   - L2 (analog, hold): collector       — speed proportional to trigger pressure
-   *   - R1 (hold):         shooter         — reverse (unjam)
    *   - L1 (hold):         collector       — reverse (eject)
    *   - Circle (hold):     loader          — fixed speed (feed)
-   *   - Square (hold):     loader          — reverse (unjam)
    *   - X (hold):          shooter         — 10% preset (close range)
    *   - D-pad Up (hold):   collector arm   — retract (wind string)
    *   - D-pad Down (hold): collector arm   — extend  (unwind string)
@@ -92,12 +89,6 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getL2Axis() > -0.95)
         .whileTrue(new RunCollector(m_collector, () -> m_operatorController.getL2Axis()));
 
-    // Operator R1 (hold) — reverse shooter to unjam
-    m_operatorController.R1().whileTrue(
-        m_shooter.runEnd(
-            () -> m_shooter.run(-ShooterConstants.kShooterPresetLow),
-            m_shooter::stop));
-
     // Operator L1 (hold) — reverse collector to eject
     m_operatorController.L1().whileTrue(
         m_collector.runEnd(
@@ -107,12 +98,6 @@ public class RobotContainer {
     // Operator Circle (hold) — loader at fixed speed, only once shooter has spun up to threshold speed
     Trigger shooterReady = new Trigger(m_shooter::isReadyToShoot);
     m_operatorController.circle().and(shooterReady).whileTrue(new RunLoader(m_loader));
-
-    // Operator Square (hold) — reverse loader to unjam
-    m_operatorController.square().whileTrue(
-        m_loader.runEnd(
-            () -> m_loader.run(-LoaderConstants.kLoaderSpeed),
-            m_loader::stop));
 
     // Operator X (hold) — shooter at 10% preset (close range)
     m_operatorController.cross().whileTrue(

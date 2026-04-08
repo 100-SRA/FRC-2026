@@ -45,13 +45,13 @@ public final class Constants {
 
   public static class LoaderConstants {
     public static final int kLoaderMotorPort      = 4;
-    public static final boolean kLoaderInverted   = false;
+    public static final boolean kLoaderInverted   = true;
     public static final double kLoaderSpeed       = 1.0;
   }
 
   public static class ShooterConstants {
     public static final int kShooterMotorPort      = 5;
-    public static final boolean kShooterInverted   = false;
+    public static final boolean kShooterInverted   = true;
     public static final double kShooterPresetMin   = 0.1; // X button     — 10% power (close range)
     public static final double kShooterPresetLow   = 0.4; // D-pad Left   — 40% power
     public static final double kShooterPresetHigh  = 0.7; // D-pad Right  — 70% power
