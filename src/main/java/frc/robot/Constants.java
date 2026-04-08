@@ -26,8 +26,8 @@ public final class Constants {
     public static final int kRightBackMotorPort  = 3;
 
     // Motor inversions — tune based on actual robot behavior
-    public static final boolean kLeftMotorsInverted  = true;
-    public static final boolean kRightMotorsInverted = false;
+    public static final boolean kLeftMotorsInverted  = false;
+    public static final boolean kRightMotorsInverted = true;
 
     // Control parameters
     public static final double kJoystickDeadband = 0.01; // Ignore small joystick movements
@@ -62,7 +62,7 @@ public final class Constants {
   }
 
   public static class CollectorArmConstants {
-    public static final int     kCollectorArmMotorPort    = 3;
+    public static final int     kCollectorArmMotorPort    = 8;
     public static final boolean kCollectorArmInverted     = false;
     public static final double  kCollectorArmRetractSpeed =  0.5;
     public static final double  kCollectorArmExtendSpeed  = -0.3;  // Reduced for softer descent
