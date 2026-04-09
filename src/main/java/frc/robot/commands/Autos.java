@@ -7,8 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.CollectorConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.Climb;
+// import frc.robot.subsystems.Climb; // CLIMB DISABLED
+import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.CollectorArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
@@ -19,24 +22,61 @@ import frc.robot.subsystems.Vision;
  */
 public final class Autos {
 
-  /**
-   * Climb auto: reverse into the pillar, climb up, then briefly run climbDown to lock hooks.
-   */
+  // CLIMB DISABLED — mechanism is too long and is currently illegal.
+  // Re-enable by uncommenting the block below.
+  /*
   public static Command climb(Climb climb, Drive drive) {
     return new SequentialCommandGroup(
-        // Step 1: Back up for 1.5 seconds at 50% to hit the pillar
-        Commands.run(() -> drive.tankDrive(-0.5, -0.5), drive)
-                .withTimeout(1.5),
-        // Step 2: Stop driving
+        Commands.run(() -> drive.tankDrive(-0.5, -0.5), drive).withTimeout(1.5),
         Commands.runOnce(drive::stop, drive),
-        // Step 3: Climb up for 12 seconds
-        Commands.run(climb::climbUp, climb)
-                .withTimeout(12.0),
-        // Step 4: Brief climbDown (1 second) to lock hooks
-        Commands.run(climb::climbDown, climb)
-                .withTimeout(1.0),
-        // Step 5: Stop climb
+        Commands.run(climb::climbUp, climb).withTimeout(12.0),
+        Commands.run(climb::climbDown, climb).withTimeout(1.0),
         Commands.runOnce(climb::stop, climb)
+    );
+  }
+  */
+
+  /**
+   * Collect auto: deploy arm and drive out to collect fuel, return to starting area, then score.
+   *
+   * Timing:
+   *   1.5s — deploy arm
+   *   3.0s — drive forward + collect
+   *   1.0s — retract arm
+   *   3.0s — drive back
+   *   5.0s — shoot
+   *  ------
+   *  13.5s total (within 15s autonomous period)
+   */
+  public static Command collectAndScore(
+      Drive drive, Collector collector, CollectorArm arm,
+      Shooter shooter, Loader loader) {
+    return new SequentialCommandGroup(
+        // Step 1: Deploy collector arm
+        Commands.run(arm::extend, arm)
+                .withTimeout(1.5),
+        // Step 2: Drive forward + collect simultaneously
+        Commands.parallel(
+            Commands.run(() -> drive.tankDrive(0.5, 0.5), drive),
+            Commands.run(() -> collector.run(CollectorConstants.kCollectorSpeed), collector)
+        ).withTimeout(3.0),
+        // Step 3: Stop drive + collector, retract arm
+        Commands.runOnce(drive::stop, drive),
+        Commands.runOnce(collector::stop, collector),
+        Commands.run(arm::retract, arm)
+                .withTimeout(1.0),
+        // Step 4: Drive backward to return
+        Commands.run(() -> drive.tankDrive(-0.5, -0.5), drive)
+                .withTimeout(3.0),
+        Commands.runOnce(drive::stop, drive),
+        // Step 5: Shoot
+        Commands.parallel(
+            Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter),
+            Commands.run(loader::run, loader)
+        ).withTimeout(5.0),
+        // Step 6: Stop shooter + loader
+        Commands.runOnce(shooter::stop, shooter),
+        Commands.runOnce(loader::stop, loader)
     );
   }
 

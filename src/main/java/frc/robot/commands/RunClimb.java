@@ -4,13 +4,15 @@
 
 package frc.robot.commands;
 
+// CLIMB DISABLED — mechanism is too long and is currently illegal.
+// Re-enable by uncommenting the block below.
+
+/*
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climb;
 
-/**
- * Runs the climb mechanism in a given direction while held.
- * Stops both motors when the command ends.
- */
+// Runs the climb mechanism in a given direction while held.
+// Stops both motors when the command ends.
 public class RunClimb extends Command {
   public enum ClimbDirection { UP, DOWN }
 
@@ -35,3 +37,4 @@ public class RunClimb extends Command {
   @Override
   public boolean isFinished() { return false; }
 }
+*/

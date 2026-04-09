@@ -78,8 +78,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    // Lower the climb for 1 second at the start of teleop so the robot is ready to drive.
-    m_robotContainer.getTeleopInitCommand().schedule();
+    // CLIMB DISABLED — teleop init climb-down removed
+    // m_robotContainer.getTeleopInitCommand().schedule();
   }
 
   /** This function is called periodically during operator control. */

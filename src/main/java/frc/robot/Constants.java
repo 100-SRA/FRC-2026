@@ -72,6 +72,9 @@ public final class Constants {
     public static final double  kCollectorArmHoldSpeed      =  0.05;
   }
 
+  // CLIMB DISABLED — mechanism is too long and is currently illegal.
+  // Re-enable by uncommenting the block below.
+  /*
   public static class ClimbConstants {
     public static final int     kClimbLeftCanId       = 6;
     public static final int     kClimbRightCanId      = 7;
@@ -83,4 +86,5 @@ public final class Constants {
     // Protects the mechanism when the robot stalls against the bar at the top of the climb.
     public static final int     kClimbCurrentLimitAmps = 30;
   }
+  */
 }
