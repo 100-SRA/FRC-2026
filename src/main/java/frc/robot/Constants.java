@@ -79,5 +79,8 @@ public final class Constants {
     public static final boolean kClimbRightInverted   = true;  // Opposite side — invert so both pull up
     public static final double  kClimbUpSpeed         = 1.0;
     public static final double  kClimbDownSpeed       = -1.0;
+    // Current limit — SPARK MAX will reduce power if the motor draws more than this.
+    // Protects the mechanism when the robot stalls against the bar at the top of the climb.
+    public static final int     kClimbCurrentLimitAmps = 30;
   }
 }

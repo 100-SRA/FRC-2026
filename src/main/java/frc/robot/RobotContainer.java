@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.CollectorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.Autos;
 import frc.robot.commands.RunClimb;
 import frc.robot.commands.RunClimb.ClimbDirection;
 import frc.robot.commands.RunCollector;
@@ -21,7 +22,11 @@ import frc.robot.subsystems.CollectorArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Loader;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -39,6 +44,9 @@ public class RobotContainer {
   private final Shooter      m_shooter      = new Shooter();
   private final CollectorArm m_collectorArm = new CollectorArm();
   private final Climb        m_climb        = new Climb();
+  private final Vision       m_vision       = new Vision();
+
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
   /**
    * Controller Configuration:
@@ -70,6 +78,11 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+
+    m_autoChooser.setDefaultOption("Climb", Autos.climb(m_climb, m_drive));
+    m_autoChooser.addOption("Drive and Shoot", Autos.driveAndShoot(m_drive, m_shooter, m_loader));
+    m_autoChooser.addOption("Vision Drive and Shoot", Autos.visionDriveAndShoot(m_drive, m_shooter, m_loader, m_vision));
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
     m_drive.setDefaultCommand(
         new TeleopDrive(
@@ -133,6 +146,13 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Autos.climb(m_climb);
+    return m_autoChooser.getSelected();
+  }
+
+  /** Run at the start of teleop: lower the climb for 1 second so the robot is ready to drive. */
+  public Command getTeleopInitCommand() {
+    return Commands.run(m_climb::climbDown, m_climb)
+                   .withTimeout(1.0)
+                   .andThen(Commands.runOnce(m_climb::stop, m_climb));
   }
 }

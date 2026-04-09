@@ -5,7 +5,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
@@ -17,8 +20,15 @@ public class Climb extends SubsystemBase {
   public Climb() {
     m_leftMotor  = new SparkMax(ClimbConstants.kClimbLeftCanId,  MotorType.kBrushless);
     m_rightMotor = new SparkMax(ClimbConstants.kClimbRightCanId, MotorType.kBrushless);
-    m_leftMotor.setInverted(ClimbConstants.kClimbLeftInverted);
-    m_rightMotor.setInverted(ClimbConstants.kClimbRightInverted);
+
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.smartCurrentLimit(ClimbConstants.kClimbCurrentLimitAmps);
+
+    config.inverted(ClimbConstants.kClimbLeftInverted);
+    m_leftMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    config.inverted(ClimbConstants.kClimbRightInverted);
+    m_rightMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   /** Drives both motors up at the configured climb speed. */
