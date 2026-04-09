@@ -52,29 +52,29 @@ public final class Autos {
       Drive drive, Collector collector, CollectorArm arm,
       Shooter shooter, Loader loader) {
     return new SequentialCommandGroup(
-        // Step 1: Deploy collector arm
+        // Step 1: Start collector + deploy arm simultaneously
+        // Collector runs for the entire auto to prevent fuel from jamming
+        Commands.runOnce(() -> collector.run(CollectorConstants.kCollectorSpeed), collector),
         Commands.run(arm::extend, arm)
                 .withTimeout(1.5),
         // Step 2: Drive forward + collect simultaneously
-        Commands.parallel(
-            Commands.run(() -> drive.tankDrive(0.5, 0.5), drive),
-            Commands.run(() -> collector.run(CollectorConstants.kCollectorSpeed), collector)
-        ).withTimeout(3.0),
-        // Step 3: Stop drive + collector, retract arm
+        Commands.run(() -> drive.tankDrive(0.5, 0.5), drive)
+                .withTimeout(3.0),
+        // Step 3: Stop drive, retract arm (collector keeps running)
         Commands.runOnce(drive::stop, drive),
-        Commands.runOnce(collector::stop, collector),
         Commands.run(arm::retract, arm)
                 .withTimeout(1.0),
-        // Step 4: Drive backward to return
+        // Step 4: Drive backward to return (collector keeps running)
         Commands.run(() -> drive.tankDrive(-0.5, -0.5), drive)
                 .withTimeout(3.0),
         Commands.runOnce(drive::stop, drive),
-        // Step 5: Shoot
+        // Step 5: Shoot (collector keeps running to prevent jams)
         Commands.parallel(
             Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter),
             Commands.run(loader::run, loader)
         ).withTimeout(5.0),
-        // Step 6: Stop shooter + loader
+        // Step 6: Stop everything
+        Commands.runOnce(collector::stop, collector),
         Commands.runOnce(shooter::stop, shooter),
         Commands.runOnce(loader::stop, loader)
     );
