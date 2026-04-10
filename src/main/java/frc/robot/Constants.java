@@ -38,7 +38,7 @@ public final class Constants {
   }
 
   public static class CollectorConstants {
-    public static final int kCollectorCanId       = 3;
+    public static final int kCollectorCanId       = 7;
     public static final boolean kCollectorInverted = false;
     public static final double kCollectorSpeed    = 1.0;
   }
@@ -59,6 +59,12 @@ public final class Constants {
     // Shooter-loader interlock — loader only activates when shooter is at speed
     public static final double kShooterReadyThreshold = 0.5;  // 50% commanded = "at speed"
     public static final double kShooterSpinUpSeconds  = 0.75; // seconds at threshold before loader is allowed
+
+    // Auto loader pulse timing — pulses the loader so the flywheel can recover between shots.
+    // No encoder means recovery is time-based; tune kAutoShooterRecoverSeconds on the field
+    // until the flywheel sounds/feels back up to speed before the next piece is fed.
+    public static final double kAutoLoaderFeedSeconds    = 0.4; // how long to run the loader per pulse
+    public static final double kAutoShooterRecoverSeconds = 0.5; // wait between pulses (~80% recovery)
   }
 
   public static class CollectorArmConstants {
