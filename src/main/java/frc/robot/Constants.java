@@ -38,14 +38,14 @@ public final class Constants {
   }
 
   public static class CollectorConstants {
-    public static final int kCollectorCanId       = 3;
+    public static final int kCollectorCanId       = 7;
     public static final boolean kCollectorInverted = false;
     public static final double kCollectorSpeed    = 1.0;
   }
 
   public static class LoaderConstants {
     public static final int kLoaderMotorPort      = 4;
-    public static final boolean kLoaderInverted   = true;
+    public static final boolean kLoaderInverted   = false;
     public static final double kLoaderSpeed       = 1.0;
   }
 
