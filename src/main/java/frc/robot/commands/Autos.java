@@ -103,6 +103,44 @@ public final class Autos {
   }
 
   /**
+   * Shoot-in-place auto: spin up the shooter, wait until ready, then feed
+   * preloads one at a time — pausing between each so the flywheel can recover
+   * before the next piece is fed. Use when starting at the front of the tower.
+   *
+   * Timing:
+   *   2.0s max — spin up shooter (exits early once isReadyToShoot())
+   *   per shot — kAutoLoaderFeedSeconds feed + kAutoShooterRecoverSeconds recover
+   *   5.0s max — total feed window (covers all preloads)
+   *   ---------
+   *   ~7.0s total (well within 15s autonomous period)
+   *
+   * Tune kAutoLoaderFeedSeconds and kAutoShooterRecoverSeconds in Constants.java
+   * until the flywheel sounds/feels back up to speed between shots.
+   */
+  public static Command shootPreloads(Shooter shooter, Loader loader) {
+    return new SequentialCommandGroup(
+        // Step 1: Spin up shooter — exits early once shooter is ready (max 2s)
+        Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter)
+                .until(shooter::isReadyToShoot)
+                .withTimeout(2.0),
+        // Step 2: Pulse loader — feed a piece, then wait for flywheel to recover, repeat
+        // Shooter runs continuously throughout; loader pulses on/off between shots
+        Commands.parallel(
+            Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter),
+            new SequentialCommandGroup(
+                Commands.run(loader::run, loader)
+                        .withTimeout(ShooterConstants.kAutoLoaderFeedSeconds),
+                Commands.runOnce(loader::stop, loader),
+                Commands.waitSeconds(ShooterConstants.kAutoShooterRecoverSeconds)
+            ).repeatedly()
+        ).withTimeout(5.0),
+        // Step 3: Stop everything
+        Commands.runOnce(loader::stop, loader),
+        Commands.runOnce(shooter::stop, shooter)
+    );
+  }
+
+  /**
    * Primary auto: drive forward until a target is visible, then shoot at a
    * speed calculated from the measured distance. Falls back to full power
    * if no target is found within 3 seconds.
