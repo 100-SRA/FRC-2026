@@ -110,9 +110,9 @@ public final class Autos {
    * Timing:
    *   2.0s max — spin up shooter (exits early once isReadyToShoot())
    *   per shot — kAutoLoaderFeedSeconds feed + kAutoShooterRecoverSeconds recover
-   *   5.0s max — total feed window (covers all preloads)
-   *   ---------
-   *   ~7.0s total (well within 15s autonomous period)
+   *   10.0s max — total feed window (covers ~10 preloads at 0.9s/cycle)
+   *   ----------
+   *   ~12.0s total (within 15s autonomous period)
    *
    * Tune kAutoLoaderFeedSeconds and kAutoShooterRecoverSeconds in Constants.java
    * until the flywheel sounds/feels back up to speed between shots.
@@ -133,7 +133,7 @@ public final class Autos {
                 Commands.runOnce(loader::stop, loader),
                 Commands.waitSeconds(ShooterConstants.kAutoShooterRecoverSeconds)
             ).repeatedly()
-        ).withTimeout(5.0),
+        ).withTimeout(10.0),
         // Step 3: Stop everything
         Commands.runOnce(loader::stop, loader),
         Commands.runOnce(shooter::stop, shooter)
