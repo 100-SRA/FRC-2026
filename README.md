@@ -1,6 +1,17 @@
 # FRC 2026 - Team 3091 REBUILT Robot Code
 
-Competition robot code for the 2026 FRC season built with WPILib's command-based framework.
+Great Season Everyone. I hope everyone had fun, and is wanting to come back for another season of FRC with the 100SRA in 2027. Im leaving this codebase up for next year, and whoever wants to look at the robot code. Please take your time reading through this README.md file. This should be a very detailed skeleton for whomever may be touching the code.
+
+Reminder... This is in Java just because, i'd challenge you to try and run this through python, you will be the first person in our program history to run the robot with python code... big achievement. 
+
+Please have fun, this is just a stepping stone of the big engineer you will be in the future. 
+
+Good luck.
+
+-Julius L. Jones Jr. (programming coach)
+
+
+# Robot Code Structure 
 
 **Technology Stack:**
 - WPILib 2026.2.1
@@ -185,19 +196,6 @@ src/main/java/frc/robot/
 - Redeploy: `./gradlew deploy`
 - Power cycle the RoboRIO if it persists
 
-## Practice Session Guide
-
-### Pre-Practice Hardware Checklist
-
-- [ ] Battery charged (>12.5V) and securely installed
-- [ ] RoboRIO powered on (solid status lights)
-- [ ] Radio powered and connected (allow 30–45 seconds to boot)
-- [ ] All motor controllers powered (check status LEDs)
-- [ ] CAN bus terminated properly
-- [ ] Both PS4 controllers available with USB cables
-- [ ] Laptop with FRC Driver Station software ready
-- [ ] PhotonVision coprocessor powered and accessible at `http://photonvision.local:5800`
-
 ### Connect to Robot
 
 **Option A: WiFi (recommended for practice)**
@@ -239,21 +237,7 @@ Expected output ends with `BUILD SUCCESSFUL` and `Upload complete`.
 
 > ⚠️ **Safety:** Ensure the robot has clear space to move before enabling. Always have someone ready to disable.
 
-## Competition Checklist
 
-- [ ] Battery fully charged (>12.5V)
-- [ ] Driver controller on Port 0, operator controller on Port 1
-- [ ] All motor controllers powered and responding
-- [ ] CAN bus properly terminated
-- [ ] Latest code deployed and verified
-- [ ] All drive motors working (both sides, correct direction)
-- [ ] All mechanism motors tested (collector, loader, shooter, collector arm)
-- [ ] Auto routine selected on dashboard (**Auto Chooser** widget)
-- [ ] Vision camera name confirmed in `Vision.java` and feed visible in PhotonVision dashboard
-- [ ] Motor temperatures normal after practice
-- [ ] No loose wires or mechanical issues
-- [ ] Driver and operator practiced with current control scheme
-- [ ] Emergency stop procedures reviewed with team
 
 ## Dependencies
 
