@@ -79,7 +79,7 @@ public class RobotContainer {
     configureBindings();
 
     m_autoChooser.setDefaultOption("Shoot Preloads",
-        Autos.shootPreloads(m_shooter, m_loader));
+        Autos.shootPreloads(m_shooter, m_loader, m_collector));
     m_autoChooser.addOption("Collect and Score",
         Autos.collectAndScore(m_drive, m_collector, m_collectorArm, m_shooter, m_loader));
     m_autoChooser.addOption("Drive and Shoot",

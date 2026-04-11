@@ -117,16 +117,18 @@ public final class Autos {
    * Tune kAutoLoaderFeedSeconds and kAutoShooterRecoverSeconds in Constants.java
    * until the flywheel sounds/feels back up to speed between shots.
    */
-  public static Command shootPreloads(Shooter shooter, Loader loader) {
+  public static Command shootPreloads(Shooter shooter, Loader loader, Collector collector) {
     return new SequentialCommandGroup(
-        // Step 1: Spin up shooter — exits early once shooter is ready (max 2s)
+        // Step 1: Start collector at 50% to keep fuel moving, spin up shooter
+        Commands.runOnce(() -> collector.run(0.5), collector),
         Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter)
                 .until(shooter::isReadyToShoot)
                 .withTimeout(2.0),
         // Step 2: Pulse loader — feed a piece, then wait for flywheel to recover, repeat
-        // Shooter runs continuously throughout; loader pulses on/off between shots
+        // Shooter and collector run continuously throughout; loader pulses on/off between shots
         Commands.parallel(
             Commands.run(() -> shooter.run(ShooterConstants.kShooterPresetHigh), shooter),
+            Commands.run(() -> collector.run(0.5), collector),
             new SequentialCommandGroup(
                 Commands.run(loader::run, loader)
                         .withTimeout(ShooterConstants.kAutoLoaderFeedSeconds),
@@ -135,6 +137,7 @@ public final class Autos {
             ).repeatedly()
         ).withTimeout(10.0),
         // Step 3: Stop everything
+        Commands.runOnce(collector::stop, collector),
         Commands.runOnce(loader::stop, loader),
         Commands.runOnce(shooter::stop, shooter)
     );
